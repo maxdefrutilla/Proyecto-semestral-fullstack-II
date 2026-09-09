@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arriendo y Servicios | INMAQUI</title>
+    <meta name="description" content="Arriendo de maquinaria con operador y servicios técnicos: mantenimiento, repuestos, instalación y certificación de equipos." />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <header>
+        <nav class="nav">
+        <a href="index.html" class="brand">
+            <span class="brand-logo">⚙️</span>
+            IN<span>MAQUI</span>
+        </a>
+        <button class="nav-toggle" aria-label="Abrir menú" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="index2.html">Venta</a></li>
+            <li><a href="index3.html" class="active">Arriendo y Servicios</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <span class="badge">Arriendo y servicios</span>
+        <h1>Arrienda maquinaria <em>con o sin operador</em></h1>
+        <p>
+        Arriendos flexibles por horas, días o meses, con entrega en obra,
+        operadores certificados y servicio técnico especializado 24/7.
+        </p>
+        <div class="hero-buttons">
+        <a href="#tarifas" class="btn btn-primary">Ver tarifas</a>
+        <a href="#contacto" class="btn btn-outline">Solicitar arriendo</a>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+        <span class="tag">Planes de arriendo</span>
+        <h2>Elige el plan que se adapte a tu obra</h2>
+        <p>Todos los planes incluyen seguro del equipo y entrega/retiro en obra.</p>
+        </div>
+        <div class="grid">
+        <div class="card plan-card">
+            <h3>Por Hora</h3>
+            <p>Perfecto para trabajos puntuales y emergencias.</p>
+            <div class="plan-price">UF 0,5<small>/hora</small></div>
+            <ul>
+            <li>Mínimo 4 horas</li>
+            <li>Operador incluido</li>
+            <li>Combustible incluido</li>
+            <li>Supervisor de faena</li>
+            </ul>
+            <a href="#contacto" class="btn btn-primary btn-sm">Solicitar</a>
+        </div>
+        <div class="card plan-card featured">
+            <h3>Por Día / Semana</h3>
+            <p>Ideal para etapas cortas de construcción.</p>
+            <div class="plan-price">UF 12<small>/día</small></div>
+            <ul>
+            <li>14% de descuento semanal</li>
+            <li>Operador incluido</li>
+            <li>Mantenciones preventivas</li>
+            <li>Prioridad en despacho</li>
+            </ul>
+            <a href="#contacto" class="btn btn-primary btn-sm">Solicitar</a>
+        </div>
+        <div class="card plan-card">
+            <h3>Por Mes</h3>
+            <p>El mejor valor para proyectos de largo plazo.</p>
+            <div class="plan-price">UF 40<small>/mes</small></div>
+            <ul>
+            <li>30% de descuento mensual</li>
+            <li>Opción con o sin operador</li>
+            <li>Capacitación de operadores propia</li>
+            <li>Equipo de respaldo en faena</li>
+            </ul>
+            <a href="#contacto" class="btn btn-primary btn-sm">Solicitar</a>
+        </div>
+        </div>
+    </section>
+
+    <section class="section" id="tarifas">
+        <div class="section-head">
+        <span class="tag">Equipos disponibles</span>
+        <h2>Tarifas de arriendo referenciales</h2>
+        <p>Valores por jornada (8 horas) sin IVA. Disponibilidad sujeta a stock.</p>
+        </div>
+        <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Equipo</th>
+                <th>Capacidad / Altura</th>
+                <th>Día</th>
+                <th>Semana</th>
+                <th>Mes</th>
+                <th>Disponibilidad</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Grúa Todo Terreno</td>
+                <td>50 ton · 42 m</td>
+                <td>$180.000</td>
+                <td>$1.080.000</td>
+                <td>$3.200.000</td>
+                <td><span class="rate-badge">Disponible</span></td>
+            </tr>
+            <tr>
+                <td>Montacargas 3 ton</td>
+                <td>3 ton · 3 m</td>
+                <td>$65.000</td>
+                <td>$390.000</td>
+                <td>$1.080.000</td>
+                <td><span class="rate-badge">Disponible</span></td>
+            </tr>
+            <tr>
+                <td>Ascensor de Obra</td>
+                <td>2.000 kg · 100 m</td>
+                <td>$95.000</td>
+                <td>$560.000</td>
+                <td>$1.600.000</td>
+                <td><span class="rate-badge">Disponible</span></td>
+            </tr>
+            <tr>
+                <td>Plataforma Articulada</td>
+                <td>20 m · 12 m alcance</td>
+                <td>$110.000</td>
+                <td>$650.000</td>
+                <td>$1.900.000</td>
+                <td><span class="rate-badge">Disponible</span></td>
+            </tr>
+            <tr>
+                <td>Plataforma de Tijera</td>
+                <td>12 m · 454 kg</td>
+                <td>$75.000</td>
+                <td>$450.000</td>
+                <td>$1.250.000</td>
+                <td><span class="rate-badge">Por encargo</span></td>
+            </tr>
+            <tr>
+                <td>Tecles y Polipastos</td>
+                <td>1 a 20 ton</td>
+                <td>$28.000</td>
+                <td>$160.000</td>
+                <td>$450.000</td>
+                <td><span class="rate-badge">Disponible</span></td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+        <span class="tag">Servicio técnico</span>
+        <h2>Servicios de mantención y soporte</h2>
+        <p>Mantén tus equipos operando al máximo rendimiento y cumpliendo la normativa.</p>
+        </div>
+        <div class="grid">
+        <div class="card">
+            <div class="card-icon">🔧</div>
+            <h3>Mantenimiento preventivo</h3>
+            <p>Planes programados cada 250 / 500 / 1.000 horas de uso, con checklist completo.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🩹</div>
+            <h3>Reparaciones correctivas</h3>
+            <p>Diagnóstico en terreno y taller, con repuestos originales y garantía de trabajo.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🧪</div>
+            <h3>Inspección y certificación</h3>
+            <p>Certificados de seguridad, ensayos de carga y cumplimiento de normativa vigente.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🎓</div>
+            <h3>Capacitación de operadores</h3>
+            <p>Cursos teórico-prácticos para operar grúas, plataformas y montacargas de forma segura.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">⛽</div>
+            <h3>Abastecimiento y repuestos</h3>
+            <p>Combustible, lubricantes y repuestos originales disponibles en todos nuestros puntos.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🚨</div>
+            <h3>Asistencia de emergencia</h3>
+            <p>Cobertura 24/7 con técnicos móviles en terreno y resolución rápida de fallas.</p>
+        </div>
+        </div>
+    </section>
+
+    <section class="section" id="contacto">
+        <div class="section-head">
+        <span class="tag">Contáctanos</span>
+        <h2>Solicita tu cotización de arriendo o servicio</h2>
+        <p>Completa el formulario y te responderemos en menos de 24 horas.</p>
+        </div>
+        <div class="form-card">
+        <form onsubmit="return enviarForm(event)">
+            <div class="form-grid">
+            <div>
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Tu nombre" required />
+            </div>
+            <div>
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" placeholder="+56 9 ..." required />
+            </div>
+            <div class="full">
+                <label for="tipo">Tipo de solicitud</label>
+                <select id="tipo">
+                <option>Arriendo de maquinaria</option>
+                <option>Compra de maquinaria</option>
+                <option>Servicio técnico</option>
+                <option>Capacitación</option>
+                <option>Otro</option>
+                </select>
+            </div>
+            <div class="full">
+                <label for="equipo">Equipo de interés</label>
+                <select id="equipo">
+                <option>Ascensor de obra</option>
+                <option>Montacargas</option>
+                <option>Grúa todo terreno</option>
+                <option>Plataforma aérea / tijera</option>
+                <option>Tecles y polipastos</option>
+                <option>Otro</option>
+                </select>
+            </div>
+            <div class="full">
+                <label for="mensaje">Mensaje</label>
+                <textarea id="mensaje" rows="5" placeholder="Cuéntanos tu proyecto, fechas y requisitos..."></textarea>
+            </div>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary" style="width:100%">Enviar solicitud</button>
+        </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+        <div>
+            <h4>INMAQUI</h4>
+            <p style="font-size:0.95rem">
+            Venta, arriendo y servicios de maquinaria industrial para
+            construcción.
+            </p>
+        </div>
+        <div>
+            <h4>Enlaces</h4>
+            <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="index2.html">Venta de maquinaria</a></li>
+            <li><a href="index3.html">Arriendo y servicios</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Contacto</h4>
+            <ul>
+            <li>📞 +56 9 1234 5678</li>
+            <li>✉️ contacto@maquipro.cl</li>
+            <li>📍 Panamericana Norte Km 12, Santiago</li>
+            <li>🕐 Lun a Sáb · 8:00 a 19:00 hrs</li>
+            </ul>
+        </div>
+        </div>
+        <div class="footer-bottom">
+        © 2026 INMAQUI S.A. — Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("open");
+        }
+
+        function enviarForm(event) {
+        event.preventDefault();
+        alert("¡Gracias por tu solicitud! Te contactaremos en menos de 24 horas.");
+        event.target.reset();
+        return false;
+        }
+    </script>
+        
+</body>
+</html>
