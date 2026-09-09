@@ -676,3 +676,53 @@ padding: 10px;
 font-size: 0.78rem;
 color: #94a3b8;
 }
+
+.mensaje-error {
+    display: block;
+    color: #dc2626;
+    font-size: 0.78rem;
+    margin-top: 4px;
+    min-height: 18px;
+}
+
+.formulario-oculto {
+    display: none;
+}
+
+.formulario-visible {
+    display: block;
+    margin-top: 20px;
+}
+
+
+.modal-personalizado {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-contenido-personalizado {
+    background: white;
+    color: var(--dark);
+    width: 400px;
+    max-width: 90%;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.modal-contenido-personalizado h2 {
+    margin-bottom: 10px;
+}
+
+.modal-contenido-personalizado p {
+    margin-bottom: 20px;
+}

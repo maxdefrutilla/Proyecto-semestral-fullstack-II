@@ -49,6 +49,7 @@
         </div>
 
         <div class="grid">
+
         <article class="machine-card">
             <div class="machine-image">
                 <img src="https://tecnoequipos-sa.cl/wp-content/uploads/2019/05/ascensores-de-obra-04.jpg" alt="Ascensor de Obra">
@@ -110,27 +111,27 @@
         </article>
 
         <article class="machine-card">
-    <div class="machine-image"> 
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCgSevFSwmwxUpqQ5dso2n-ErbSz-lE5QcjZrMIIuJc-X8vfVt8Xl9zaNb&s=10" alt="Plataforma Aérea Articulada"> 
-    </div>
-    <div class="machine-body">
-        <span class="machine-tag">Nuevo</span>
-        <h3>Plataforma Aérea Articulada</h3>
-        <p class="spec">Altura de trabajo 20 m · Alcance 12 m</p>
-        <div class="details">
-            <span>🔸 Panorámica eléctrica</span>
-            <span>🔸 Rotación 360°</span>
-            <span>🔸 Canasta para 2 personas</span>
-        </div>
-        <div class="price-row">
-            <div class="price">Desde $12.200.000<small>y financiamiento a 12 cuotas</small></div>
-            <a href="#contacto" class="btn btn-sm btn-primary">Cotizar</a>
-        </div>
-    </div>
-</article>
+            <div class="machine-image">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCgSevFSwmwxUpqQ5dso2n-ErbSz-lE5QcjZrMIIuJc-X8vfVt8Xl9zaNb&s=10" alt="Plataforma Aérea Articulada">
+            </div>
+            <div class="machine-body">
+                <span class="machine-tag">Nuevo</span>
+                <h3>Plataforma Aérea Articulada</h3>
+                <p class="spec">Altura de trabajo 20 m · Alcance 12 m</p>
+                <div class="details">
+                    <span>🔸 Panorámica eléctrica</span>
+                    <span>🔸 Rotación 360°</span>
+                    <span>🔸 Canasta para 2 personas</span>
+                </div>
+                <div class="price-row">
+                    <div class="price">Desde $12.200.000<small>y financiamiento a 12 cuotas</small></div>
+                    <a href="#contacto" class="btn btn-sm btn-primary">Cotizar</a>
+                </div>
+            </div>
+        </article>
 
         <article class="machine-card">
-            <div class="machine-image"> 
+            <div class="machine-image">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeX3K_MS9Ks9P14v2kbpoxUhgH729BzeGVH6F3vB_xxiwmMJAJqCIXlHs&s=10" alt="Tecles y Polipastos">
             </div>
             <div class="machine-body">
@@ -150,7 +151,9 @@
         </article>
 
         <article class="machine-card">
-            <div class="machine-image"><img src="https://res.cloudinary.com/doosan-bobcat/image/upload/c_pad,f_auto,h_320,q_auto,w_480/v1661506262/bobcat-assets/alao-approved/la/products/skid-steer-loaders/models/s570/s570-studio" alt="Minicargador Skid Steer"></div>
+            <div class="machine-image">
+                <img src="https://res.cloudinary.com/doosan-bobcat/image/upload/c_pad,f_auto,h_320,q_auto,w_480/v1661506262/bobcat-assets/alao-approved/la/products/skid-steer-loaders/models/s570/s570-studio" alt="Minicargador Skid Steer">
+            </div>
             <div class="machine-body">
             <span class="machine-tag">Usado · 2021</span>
             <h3>Minicargador Skid Steer</h3>
@@ -186,6 +189,7 @@
             </div>
             </div>
         </article>
+
         </div>
     </section>
 
@@ -197,6 +201,7 @@
 
     <footer>
         <div class="footer-inner">
+
         <div>
             <h4>INMAQUI S.A.</h4>
             <p style="font-size:0.95rem">
@@ -204,6 +209,7 @@
             construcción.
             </p>
         </div>
+
         <div>
             <h4>Enlaces</h4>
             <ul>
@@ -212,6 +218,7 @@
             <li><a href="index3.html">Arriendo y servicios</a></li>
             </ul>
         </div>
+
         <div>
             <h4>Contacto</h4>
             <ul>
@@ -221,17 +228,262 @@
             <li>🕐 Lun a Sáb · 8:00 a 19:00 hrs</li>
             </ul>
         </div>
+
+        <div class="contacto-alternativo">
+            <span>¿Tienes otras consultas?</span>
+
+            <h3>
+                déjanos tus datos y nosotros te contactamos
+            </h3>
+
+            <!-- AGREGADO: BOTON PARA MOSTRAR FORMULARIO -->
+            <button
+                type="button"
+                id="btnMostrarContacto"
+                class="btn btn-primary"
+            >
+                Dejar mis datos
+            </button>
         </div>
+
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- AGREGADO: FORMULARIO DE CONTACTO OCULTO -->
+        <!-- ============================================== -->
+
+        <div
+            id="contenedorFormularioContacto"
+            class="formulario-oculto"
+        >
+
+            <div
+                class="form-card"
+                style="color: var(--dark); margin-bottom: 25px;"
+            >
+
+                <h3>Déjanos tus datos</h3>
+
+                <p>
+                    Completa tus datos y uno de nuestros asesores
+                    se comunicará contigo.
+                </p>
+
+                <form id="formContacto" novalidate>
+
+                    <div class="form-grid">
+
+                        <!-- NOMBRE -->
+                        <div>
+
+                            <label for="contactoNombre">
+                                Nombre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="contactoNombre"
+                                placeholder="Ingresa tu nombre"
+                            >
+
+                            <span
+                                id="errorContactoNombre"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- EMPRESA -->
+                        <div>
+
+                            <label for="contactoEmpresa">
+                                Empresa
+                            </label>
+
+                            <input
+                                type="text"
+                                id="contactoEmpresa"
+                                placeholder="Ingresa tu empresa"
+                            >
+
+                            <span
+                                id="errorContactoEmpresa"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- TELEFONO -->
+                        <div>
+
+                            <label for="contactoTelefono">
+                                Teléfono
+                            </label>
+
+                            <input
+                                type="text"
+                                id="contactoTelefono"
+                                placeholder="+56912345678"
+                            >
+
+                            <span
+                                id="errorContactoTelefono"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- RUT -->
+                        <div>
+
+                            <label for="contactoRut">
+                                RUT
+                            </label>
+
+                            <input
+                                type="text"
+                                id="contactoRut"
+                                placeholder="12345678-5"
+                            >
+
+                            <span
+                                id="errorContactoRUT"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- CORREO -->
+                        <div class="full">
+
+                            <label for="contactoCorreo">
+                                Correo
+                            </label>
+
+                            <input
+                                type="email"
+                                id="contactoCorreo"
+                                placeholder="correo@ejemplo.cl"
+                            >
+
+                            <span
+                                id="errorContactoCorreo"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- ASUNTO -->
+                        <div class="full">
+
+                            <label for="contactoAsunto">
+                                Asunto
+                            </label>
+
+                            <input
+                                type="text"
+                                id="contactoAsunto"
+                                maxlength="50"
+                                placeholder="Ingresa el asunto"
+                            >
+
+                            <span
+                                id="errorContactoAsunto"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- MENSAJE -->
+                        <div class="full">
+
+                            <label for="contactoMensaje">
+                                Mensaje
+                            </label>
+
+                            <textarea
+                                id="contactoMensaje"
+                                rows="6"
+                                placeholder="Escribe tu mensaje, máximo 500 palabras"
+                            ></textarea>
+
+                            <span
+                                id="errorContactoMensaje"
+                                class="mensaje-error"
+                            ></span>
+
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        style="width:100%"
+                    >
+                        Enviar datos
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
         <div class="footer-bottom">
-        © 2026 INMAQUI S.A. — Todos los derechos reservados. 
+        © 2026 INMAQUI S.A. — Todos los derechos reservados.
         </div>
+
     </footer>
+
+
+    <!-- ============================================== -->
+    <!-- AGREGADO: MODAL FORMULARIO CONTACTO -->
+    <!-- ============================================== -->
+
+    <div id="modalContacto" class="modal-personalizado">
+
+        <div class="modal-contenido-personalizado">
+
+            <h2>Formulario enviado</h2>
+
+            <p>
+                Tus datos fueron ingresados correctamente.
+                Nos comunicaremos contigo pronto.
+            </p>
+
+            <button
+                id="cerrarModalContacto"
+                type="button"
+                class="btn btn-primary"
+            >
+                Aceptar
+            </button>
+
+        </div>
+
+    </div>
+
 
     <script>
         function toggleMenu() {
         document.getElementById("navLinks").classList.toggle("open");
         }
     </script>
-        
+
+
+    <!-- AGREGADO: JAVASCRIPT DEL FORMULARIO -->
+    <script src="contacto.js"></script>
+
 </body>
 </html>

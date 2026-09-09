@@ -205,46 +205,210 @@
         <p>Completa el formulario y te responderemos en menos de 24 horas.</p>
         </div>
         <div class="form-card">
-        <form onsubmit="return enviarForm(event)">
-            <div class="form-grid">
+
+    <form id="formCotizacion" novalidate>
+
+        <div class="form-grid">
+
+            <!-- NOMBRE -->
             <div>
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" placeholder="Tu nombre" required />
+                <label for="cotNombre">Nombre</label>
+
+                <input
+                    type="text"
+                    id="cotNombre"
+                    placeholder="Tu nombre"
+                >
+
+                <span
+                    id="errorCotNombre"
+                    class="mensaje-error"
+                ></span>
             </div>
+
+
+            <!-- TELEFONO -->
             <div>
-                <label for="telefono">Teléfono</label>
-                <input type="tel" id="telefono" placeholder="+56 9 ..." required />
+                <label for="cotTelefono">Teléfono</label>
+
+                <input
+                    type="text"
+                    id="cotTelefono"
+                    placeholder="+56912345678"
+                >
+
+                <span
+                    id="errorCotTelefono"
+                    class="mensaje-error"
+                ></span>
             </div>
+
+
+            <!-- CORREO -->
             <div class="full">
-                <label for="tipo">Tipo de solicitud</label>
-                <select id="tipo">
-                <option>Arriendo de maquinaria</option>
-                <option>Compra de maquinaria</option>
-                <option>Servicio técnico</option>
-                <option>Capacitación</option>
-                <option>Otro</option>
+                <label for="cotCorreo">Correo</label>
+
+                <input
+                    type="text"
+                    id="cotCorreo"
+                    placeholder="correo@ejemplo.cl"
+                >
+
+                <span
+                    id="errorCotCorreo"
+                    class="mensaje-error"
+                ></span>
+            </div>
+
+
+            <!-- TIPO DE SOLICITUD -->
+            <div class="full">
+
+                <label for="cotTipo">
+                    Tipo de solicitud
+                </label>
+
+                <select id="cotTipo">
+
+                    <option value="">
+                        Seleccione una opción
+                    </option>
+
+                    <option value="arriendo">
+                        Arriendo de maquinaria
+                    </option>
+
+                    <option value="compra">
+                        Compra de maquinaria
+                    </option>
+
+                    <option value="servicio">
+                        Servicio técnico
+                    </option>
+
+                    <option value="capacitacion">
+                        Capacitación
+                    </option>
+
+                    <option value="otro">
+                        Otro
+                    </option>
+
                 </select>
+
+                <span
+                    id="errorCotTipo"
+                    class="mensaje-error"
+                ></span>
+
             </div>
+
+
+            <!-- EQUIPO -->
             <div class="full">
-                <label for="equipo">Equipo de interés</label>
-                <select id="equipo">
-                <option>Ascensor de obra</option>
-                <option>Montacargas</option>
-                <option>Grúa todo terreno</option>
-                <option>Plataforma aérea / tijera</option>
-                <option>Tecles y polipastos</option>
-                <option>Otro</option>
+
+                <label for="cotEquipo">
+                    Equipo de interés
+                </label>
+
+                <select id="cotEquipo">
+
+                    <option value="">
+                        Seleccione un equipo
+                    </option>
+
+                    <option value="ascensor">
+                        Ascensor de obra
+                    </option>
+
+                    <option value="montacargas">
+                        Montacargas
+                    </option>
+
+                    <option value="grua">
+                        Grúa todo terreno
+                    </option>
+
+                    <option value="plataforma">
+                        Plataforma aérea / tijera
+                    </option>
+
+                    <option value="tecles">
+                        Tecles y polipastos
+                    </option>
+
+                    <option value="otro">
+                        Otro
+                    </option>
+
                 </select>
+
+                <span
+                    id="errorCotEquipo"
+                    class="mensaje-error"
+                ></span>
+
             </div>
+
+
+            <!-- MENSAJE -->
             <div class="full">
-                <label for="mensaje">Mensaje</label>
-                <textarea id="mensaje" rows="5" placeholder="Cuéntanos tu proyecto, fechas y requisitos..."></textarea>
+
+                <label for="cotMensaje">
+                    Mensaje
+                </label>
+
+                <textarea
+                    id="cotMensaje"
+                    rows="5"
+                    placeholder="Cuéntanos tu proyecto, fechas y requisitos..."
+                ></textarea>
+
+                <span
+                    id="errorCotMensaje"
+                    class="mensaje-error"
+                ></span>
+
             </div>
-            </div>
-            <br />
-            <button type="submit" class="btn btn-primary" style="width:100%">Enviar solicitud</button>
-        </form>
+
         </div>
+
+        <br>
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+            style="width:100%"
+        >
+            Enviar solicitud
+        </button>
+
+    </form>
+
+</div>
+<!-- MODAL COTIZACION -->
+<div id="modalCotizacion" class="modal-personalizado">
+
+    <div class="modal-contenido-personalizado">
+
+        <h2>Solicitud enviada</h2>
+
+        <p>
+            Tu solicitud de cotización fue enviada correctamente.
+            Nos comunicaremos contigo pronto.
+        </p>
+
+        <button
+            id="cerrarModalCotizacion"
+            type="button"
+            class="btn btn-primary"
+        >
+            Aceptar
+        </button>
+
+    </div>
+
+</div>
     </section>
 
     <footer>
@@ -283,14 +447,7 @@
         function toggleMenu() {
         document.getElementById("navLinks").classList.toggle("open");
         }
-
-        function enviarForm(event) {
-        event.preventDefault();
-        alert("¡Gracias por tu solicitud! Te contactaremos en menos de 24 horas.");
-        event.target.reset();
-        return false;
-        }
     </script>
-        
+    <script src="cotizacion.js"></script>
 </body>
 </html>
