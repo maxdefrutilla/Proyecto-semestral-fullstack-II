@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="es">
+    <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Carrito | INMAQUI</title><meta name="description" content="INMAQUI: venta, arriendo y servicios de maquinaria. Ascensores, camiones, herramientas e indumentaria para tu obra."><link rel="stylesheet" href="assets/vendor/bootstrap.min.css"><link rel="stylesheet" href="style.css"></head>
+    <body data-page="carrito.html"><a class="skip-link" href="#contenido">Saltar al contenido</a>
+        <div class="top-strip">
+            <div class="container"><span>Maquinaria y equipamiento para tu obra</span><span>Santiago, Chile · Lun a sáb, 8:00 a 19:00</span></div>
+            </div>
+        <header class="site-header">
+            <nav class="navbar navbar-expand-lg" aria-label="Navegación principal">
+                <div class="container"><a class="brand navbar-brand" href="index.html" aria-label="INMAQUI, inicio"><span class="brand-mark" aria-hidden="true">IM</span><span>IN<em>MAQUI</em></span></a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="menuPrincipal">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="index2.html">Catálogo</a></li>
+                            <li class="nav-item"><a class="nav-link" href="index3.html">Arriendo y servicios</a></li>
+                            <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
+                            <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                            </ul>
+                        <div class="navbar-actions"><a href="login.html" id="accountLink" class="btn btn-outline-primary btn-sm">Ingresar</a><a href="carrito.html" class="cart-link" aria-label="Ver carrito"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h2l3 12h11l2-9H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span class="d-lg-none d-xl-inline">Carrito</span><span class="cart-count" id="cartCount" aria-label="Productos en el carrito">0</span></a></div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        <main id="contenido">
+            <noscript>
+                <p class="noscript">Activa JavaScript para usar los filtros, formularios y carrito. El catálogo y las fichas están disponibles en HTML.</p>
+                </noscript>
+            <section class="page-intro">
+                <div class="container">
+                    <nav aria-label="Ruta de navegación">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Carrito</li>
+                            </ol>
+                        </nav>
+                    <span class="eyebrow">Carrito</span>
+                    <h1>Tu selección, en un lugar.</h1>
+                    <p>Revisa los productos, ajusta las cantidades y consulta el total de tu selección.</p>
+                    </div>
+                </section>
+            <section class="section">
+                <div class="container">
+                    <div id="carritoVacio" class="empty-state"><span class="eyebrow">Tu próxima obra comienza aquí</span>
+                        <h2>Tu carrito está vacío.</h2>
+                        <p>Explora el catálogo y agrega los equipos que necesitas.</p>
+                        <a class="btn btn-primary" href="index2.html">Explorar productos</a></div>
+                    <div id="carritoConProductos" class="row g-5 d-none">
+                        <div class="col-lg-8">
+                            <div class="d-flex justify-content-between align-items-center gap-3">
+                                <p id="unidadesCarrito" class="mb-0 text-muted"></p>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#clearCartModal">Vaciar carrito</button></div>
+                            <article class="cart-row d-none" id="fila-ascensor-obra"><a href="ascensor-obra.html"><img src="assets/img/ascensores.jpg" alt="Ascensor de obra 2T"></a>
+                                <div><span class="muted-label">Ascensores</span>
+                                    <h2><a href="ascensor-obra.html">Ascensor de obra 2T</a></h2>
+                                    <span class="muted-label">$6.500.000 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('ascensor-obra', -1)" aria-label="Disminuir Ascensor de obra 2T">−</button><input class="form-control" id="cantidad-ascensor-obra" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('ascensor-obra')" aria-label="Cantidad de Ascensor de obra 2T"><button type="button" onclick="cambiarCantidad('ascensor-obra', 1)" aria-label="Aumentar Ascensor de obra 2T">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-ascensor-obra"></span><button type="button" class="remove-item" onclick="quitarProducto('ascensor-obra')" aria-label="Quitar Ascensor de obra 2T">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-ascensor-industrial"><a href="ascensor-industrial.html"><img src="assets/img/ascensores.jpg" alt="Ascensor industrial 1T"></a>
+                                <div><span class="muted-label">Ascensores</span>
+                                    <h2><a href="ascensor-industrial.html">Ascensor industrial 1T</a></h2>
+                                    <span class="muted-label">$4.900.000 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('ascensor-industrial', -1)" aria-label="Disminuir Ascensor industrial 1T">−</button><input class="form-control" id="cantidad-ascensor-industrial" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('ascensor-industrial')" aria-label="Cantidad de Ascensor industrial 1T"><button type="button" onclick="cambiarCantidad('ascensor-industrial', 1)" aria-label="Aumentar Ascensor industrial 1T">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-ascensor-industrial"></span><button type="button" class="remove-item" onclick="quitarProducto('ascensor-industrial')" aria-label="Quitar Ascensor industrial 1T">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-camion-tolva"><a href="camion-tolva.html"><img src="assets/img/camiones.jpg" alt="Camión tolva 20T"></a>
+                                <div><span class="muted-label">Camiones</span>
+                                    <h2><a href="camion-tolva.html">Camión tolva 20T</a></h2>
+                                    <span class="muted-label">$48.900.000 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('camion-tolva', -1)" aria-label="Disminuir Camión tolva 20T">−</button><input class="form-control" id="cantidad-camion-tolva" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('camion-tolva')" aria-label="Cantidad de Camión tolva 20T"><button type="button" onclick="cambiarCantidad('camion-tolva', 1)" aria-label="Aumentar Camión tolva 20T">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-camion-tolva"></span><button type="button" class="remove-item" onclick="quitarProducto('camion-tolva')" aria-label="Quitar Camión tolva 20T">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-camion-tolva-12"><a href="camion-tolva-12.html"><img src="assets/img/camiones.jpg" alt="Camión tolva 12T"></a>
+                                <div><span class="muted-label">Camiones</span>
+                                    <h2><a href="camion-tolva-12.html">Camión tolva 12T</a></h2>
+                                    <span class="muted-label">$34.900.000 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('camion-tolva-12', -1)" aria-label="Disminuir Camión tolva 12T">−</button><input class="form-control" id="cantidad-camion-tolva-12" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('camion-tolva-12')" aria-label="Cantidad de Camión tolva 12T"><button type="button" onclick="cambiarCantidad('camion-tolva-12', 1)" aria-label="Aumentar Camión tolva 12T">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-camion-tolva-12"></span><button type="button" class="remove-item" onclick="quitarProducto('camion-tolva-12')" aria-label="Quitar Camión tolva 12T">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-taladro-18v"><a href="taladro-18v.html"><img src="assets/img/herramientas.jpg" alt="Taladro inalámbrico 18V"></a>
+                                <div><span class="muted-label">Herramientas</span>
+                                    <h2><a href="taladro-18v.html">Taladro inalámbrico 18V</a></h2>
+                                    <span class="muted-label">$89.990 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('taladro-18v', -1)" aria-label="Disminuir Taladro inalámbrico 18V">−</button><input class="form-control" id="cantidad-taladro-18v" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('taladro-18v')" aria-label="Cantidad de Taladro inalámbrico 18V"><button type="button" onclick="cambiarCantidad('taladro-18v', 1)" aria-label="Aumentar Taladro inalámbrico 18V">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-taladro-18v"></span><button type="button" class="remove-item" onclick="quitarProducto('taladro-18v')" aria-label="Quitar Taladro inalámbrico 18V">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-taladro-percutor"><a href="taladro-percutor.html"><img src="assets/img/herramientas.jpg" alt="Taladro percutor 20V"></a>
+                                <div><span class="muted-label">Herramientas</span>
+                                    <h2><a href="taladro-percutor.html">Taladro percutor 20V</a></h2>
+                                    <span class="muted-label">$129.990 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('taladro-percutor', -1)" aria-label="Disminuir Taladro percutor 20V">−</button><input class="form-control" id="cantidad-taladro-percutor" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('taladro-percutor')" aria-label="Cantidad de Taladro percutor 20V"><button type="button" onclick="cambiarCantidad('taladro-percutor', 1)" aria-label="Aumentar Taladro percutor 20V">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-taladro-percutor"></span><button type="button" class="remove-item" onclick="quitarProducto('taladro-percutor')" aria-label="Quitar Taladro percutor 20V">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-casco-seguridad"><a href="casco-seguridad.html"><img src="assets/img/indumentaria.jpg" alt="Casco de seguridad amarillo"></a>
+                                <div><span class="muted-label">Indumentaria</span>
+                                    <h2><a href="casco-seguridad.html">Casco de seguridad amarillo</a></h2>
+                                    <span class="muted-label">$12.990 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('casco-seguridad', -1)" aria-label="Disminuir Casco de seguridad amarillo">−</button><input class="form-control" id="cantidad-casco-seguridad" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('casco-seguridad')" aria-label="Cantidad de Casco de seguridad amarillo"><button type="button" onclick="cambiarCantidad('casco-seguridad', 1)" aria-label="Aumentar Casco de seguridad amarillo">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-casco-seguridad"></span><button type="button" class="remove-item" onclick="quitarProducto('casco-seguridad')" aria-label="Quitar Casco de seguridad amarillo">Quitar producto</button></div>
+                                </article>
+                            <article class="cart-row d-none" id="fila-casco-supervisor"><a href="casco-supervisor.html"><img src="assets/img/indumentaria.jpg" alt="Casco de supervisor"></a>
+                                <div><span class="muted-label">Indumentaria</span>
+                                    <h2><a href="casco-supervisor.html">Casco de supervisor</a></h2>
+                                    <span class="muted-label">$18.990 por unidad</span>
+                                    <div class="quantity-control"><button type="button" onclick="cambiarCantidad('casco-supervisor', -1)" aria-label="Disminuir Casco de supervisor">−</button><input class="form-control" id="cantidad-casco-supervisor" type="number" min="1" max="99" step="1" value="1" onchange="editarCantidad('casco-supervisor')" aria-label="Cantidad de Casco de supervisor"><button type="button" onclick="cambiarCantidad('casco-supervisor', 1)" aria-label="Aumentar Casco de supervisor">+</button></div>
+                                    </div>
+                                <div class="cart-row-total"><span id="subtotal-casco-supervisor"></span><button type="button" class="remove-item" onclick="quitarProducto('casco-supervisor')" aria-label="Quitar Casco de supervisor">Quitar producto</button></div>
+                                </article>
+                            <a class="text-link d-inline-block mt-4" href="index2.html">← Seguir explorando</a></div>
+                        <aside class="col-lg-4">
+                            <div class="cart-summary">
+                                <h2>Resumen del carrito</h2>
+                                <div class="summary-line"><span>Productos</span><strong id="precioProductos"></strong></div>
+                                <div class="summary-line small text-muted"><span>IVA</span><span>Incluido</span></div>
+                                <div class="summary-line small text-muted"><span>Despacho</span><span>A coordinar</span></div>
+                                <div class="summary-line summary-total"><span>Total productos</span><span id="totalCarrito"></span></div>
+                                <button type="button" class="btn btn-primary w-100" onclick="revisarSolicitud()">Revisar solicitud</button>
+                                <p class="image-note mt-3 mb-0">Valores de muestra. No se realizarán cobros.</p>
+                                </div>
+                            </aside>
+                        </div>
+                    </div>
+                </section>
+            <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title fs-5" id="checkoutTitle">Resumen de tu selección</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+                        <div class="modal-body">
+                            <p id="checkoutSummary"></p>
+                            <p class="text-muted mb-0">Esta es una demostración: no se realizará un cobro ni un pedido real. Tu carrito se conservará para que puedas seguir editándolo.</p>
+                            </div>
+                        <div class="modal-footer"><button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Seguir revisando</button><a class="btn btn-primary" href="contacto.html">Consultar por estos equipos</a></div>
+                        </div>
+                    </div>
+                </div>
+            <div class="modal fade" id="clearCartModal" tabindex="-1" aria-labelledby="clearCartTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="clearCartTitle" class="modal-title fs-5">¿Vaciar el carrito?</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+                        <div class="modal-body">Se quitarán todos los productos de tu selección.</div>
+                        <div class="modal-footer"><button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Conservar productos</button><button type="button" class="btn btn-danger" onclick="vaciarCarrito()" data-bs-dismiss="modal">Vaciar carrito</button></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        <footer class="footer">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-5"><a class="brand" href="index.html" aria-label="INMAQUI, inicio"><span class="brand-mark" aria-hidden="true">IM</span><span>IN<em>MAQUI</em></span></a>
+                        <p class="col-lg-9">Maquinaria, herramientas y equipamiento para acompañar cada etapa de tu proyecto.</p>
+                        </div>
+                    <div class="col-6 col-lg-3">
+                        <h3>Explora INMAQUI</h3>
+                        <ul>
+                            <li><a href="index2.html">Catálogo de productos</a></li>
+                            <li><a href="index3.html">Arriendo y servicios</a></li>
+                            <li><a href="nosotros.html">Nuestra empresa</a></li>
+                            <li><a href="login.html">Ingresar / Registrarse</a></li>
+                            </ul>
+                        </div>
+                    <div class="col-6 col-lg-4">
+                        <h3>Hablemos de tu proyecto</h3>
+                        <ul>
+                            <li>Panamericana Norte Km 12, Santiago</li>
+                            <li>Lun a sáb · 8:00 a 19:00</li>
+                            <li><a href="contacto.html">Dejar mis datos <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                <div class="footer-bottom"><span>© 2026 INMAQUI · Proyecto académico, Grupo 09</span><span>Valores e imágenes referenciales · <a href="creditos.html">Créditos de imágenes</a></span></div>
+                </div>
+            </footer>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" aria-live="polite" aria-atomic="true">
+            <div id="siteToast" class="toast bg-white" role="status">
+                <div class="d-flex">
+                    <div class="toast-body" id="toastMessage"></div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar aviso"></button></div>
+                </div>
+            </div>
+        <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+        <script src="js/general.js"></script>
+        <script src="js/datos-carrito.js"></script>
+        <script src="js/carrito.js"></script>
+        </body>
+    </html>
