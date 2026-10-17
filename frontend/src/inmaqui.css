@@ -969,3 +969,156 @@ button,input,select,textarea {
 .cantidad-producto {
     width: 100px;
 }
+
+
+/* ===== AJUSTES FINALES DEL HERO ===== */
+
+/* Altura consistente para ambas diapositivas */
+.hero .carousel-item {
+  height: 560px;
+  min-height: 0;
+  position: relative;
+}
+
+/* Imagen alineada al lado derecho */
+.hero .hero-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Mantener una capa oscura para leer el texto */
+.hero .hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    #172d32 0%,
+    #172d32 30%,
+    rgba(23,45,50,.85) 48%,
+    rgba(23,45,50,.12) 100%
+  );
+}
+
+/* Reservar espacio para el contenido */
+.hero .hero-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 660px;
+  padding: 85px 0 95px;
+}
+
+.hero .hero-copy h1 {
+  max-width: 620px;
+}
+
+.hero .hero-copy p {
+  max-width: 480px;
+}
+
+/* Transición fade */
+.hero.carousel-fade .carousel-item {
+  transition: opacity 0.9s ease-in-out;
+}
+
+/* Controles siempre por encima */
+.hero .hero-controls {
+  z-index: 5;
+}
+
+/* Tabletas */
+@media (max-width: 991px) {
+  .hero .carousel-item {
+    height: 570px;
+  }
+
+  .hero .hero-image {
+    width: 75%;
+  }
+
+  .hero .hero-copy {
+    max-width: 560px;
+    padding: 80px 0 100px;
+  }
+}
+
+/* Celulares */
+@media (max-width: 767px) {
+  .hero .carousel-item {
+    height: 590px;
+  }
+
+  .hero .hero-image {
+    width: 100%;
+    opacity: 0.42;
+  }
+
+  .hero .hero-shade {
+    background: linear-gradient(
+      90deg,
+      rgba(23,45,50,.95),
+      rgba(23,45,50,.70)
+    );
+  }
+
+  .hero .hero-copy {
+    max-width: 100%;
+    padding: 65px 0 110px;
+  }
+
+  .hero .hero-copy h1 {
+    font-size: clamp(2.3rem, 8vw, 3.5rem);
+  }
+}
+
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .hero.carousel-fade .carousel-item {
+    transition: none;
+  }
+
+  /* Reservar espacio inferior para los controles */
+
+.hero .hero-copy {
+  padding-top: 65px;
+  padding-bottom: 125px;
+}
+
+.hero .hero-copy h1 {
+  margin-bottom: 1rem;
+}
+
+.hero .hero-copy p {
+  margin-bottom: 1rem;
+}
+
+.hero .hero-controls {
+  bottom: 13px;
+}
+
+/* Ajuste para pantallas pequeñas */
+
+@media (max-width: 767px) {
+  .hero .carousel-item {
+    height: auto;
+    min-height: 620px;
+  }
+
+  .hero .hero-copy {
+    padding-top: 55px;
+    padding-bottom: 145px;
+  }
+}
+
+/* Prueba temporal de transición */
+
+#portada.carousel-fade .carousel-item {
+  transition: opacity 1.2s ease-in-out !important;
+}
+
+}

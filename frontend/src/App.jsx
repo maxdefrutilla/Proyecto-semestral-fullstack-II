@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+
 import Header from './components/Header'
 import Inicio from './pages/Inicio'
 import Catalogo from './pages/Catalogo'
-import './App.css'
-import { Routes, Route } from 'react-router-dom'
+import Detalle from './pages/Detalle.jsx'
+
+
 
 function App() {
 
@@ -15,6 +17,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Inicio />} />
       <Route path="/catalogo" element={<Catalogo />} />
+      <Route path="/producto/:id" element={<Detalle />} />
     </Routes>
   
       
