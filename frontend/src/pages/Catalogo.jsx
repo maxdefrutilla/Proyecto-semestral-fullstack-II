@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import ListaProductos from '../components/ListaProductos.jsx'
 import productos from '../data/productos.json'
@@ -11,7 +10,7 @@ const categorias = [
   { id: 'indumentaria', nombre: 'Indumentaria' }
 ]
 
-function Catalogo() {
+function Catalogo({ onAgregar }){
   const [categoria, setCategoria] = useState('todas')
   const [busqueda, setBusqueda] = useState('')
 
@@ -112,7 +111,10 @@ function Catalogo() {
                 </button>
               </div>
 
-              <ListaProductos productos={productosFiltrados} />
+              <ListaProductos
+                productos={productosFiltrados} 
+                onAgregar={onAgregar}
+                />
 
             </div>
           </div>

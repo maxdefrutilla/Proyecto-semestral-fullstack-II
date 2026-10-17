@@ -9,7 +9,7 @@ import ListaProductos from '../components/ListaProductos.jsx'
 
 import productos from '../data/productos.json'
 
-function Inicio() {
+function Inicio({ onAgregar }) {
 
   const categorias = [
     'ascensores',
@@ -52,8 +52,10 @@ function Inicio() {
             </Link>
           </div>
 
-          <ListaProductos productos={destacados} />
-
+          <ListaProductos 
+            productos={destacados} 
+            onAgregar={onAgregar}
+          />
         </div>
       </section>
 

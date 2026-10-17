@@ -14,7 +14,7 @@ const imagenes = {
   'indumentaria.jpg': indumentaria
 }
 
-function Detalle() {
+function Detalle({ onAgregar }) {
   const { id } = useParams()
 
   const producto = productos.find(
@@ -78,11 +78,14 @@ function Detalle() {
 
           <div className="d-flex gap-3 flex-wrap mt-4">
             <button
-              type="button"
-              className="btn btn-primary"
-              disabled
-            >
-              Agregar al carrito
+                type="button"
+                className="btn btn-primary"
+                disabled={producto.stock < 1}
+                onClick={() => onAgregar(producto.id, 1)}
+                >
+                {producto.stock > 0
+                    ? 'Agregar al carrito'
+                    : 'Sin stock'}
             </button>
 
             <Link
