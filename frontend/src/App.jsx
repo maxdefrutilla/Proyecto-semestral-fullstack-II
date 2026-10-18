@@ -1,16 +1,49 @@
-
 import { useEffect, useState } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
+import Checkout from './pages/Checkout.jsx'
+import ResultadoCompra from './pages/ResultadoCompra.jsx'
 import Header from './components/Header.jsx'
 import Inicio from './pages/Inicio.jsx'
 import Catalogo from './pages/Catalogo.jsx'
 import Detalle from './pages/Detalle.jsx'
 import Carrito from './pages/Carrito.jsx'
 
-import productos from './data/productos.json'
+import productosIniciales from './data/productos.json'
 
 const CLAVE_CARRITO = 'inmaqui.carrito'
+
+const CLAVE_PRODUCTOS = 'inmaqui.productos'
+const CLAVE_PEDIDOS = 'inmaqui.pedidos'
+
+function cargarProductos() {
+  try {
+    const guardados = localStorage.getItem(CLAVE_PRODUCTOS)
+
+    if (!guardados) return productosIniciales
+
+    const datos = JSON.parse(guardados)
+
+    return Array.isArray(datos) ? datos : productosIniciales
+  } catch {
+    return productosIniciales
+  }
+}
+
+function cargarPedidos() {
+  try {
+    const guardados = localStorage.getItem(CLAVE_PEDIDOS)
+
+    if (!guardados) return []
+
+    const datos = JSON.parse(guardados)
+
+    return Array.isArray(datos) ? datos : []
+  } catch {
+    return []
+  }
+}
 
 function cargarCarrito() {
   try {
@@ -54,6 +87,14 @@ function cargarCarrito() {
 function App() {
   const [carrito, setCarrito] = useState(cargarCarrito)
   const [aviso, setAviso] = useState('')
+  const navigate = useNavigate()
+
+const [productos, setProductos] = useState(cargarProductos)
+const [pedidos, setPedidos] = useState(cargarPedidos)
+const [ultimoPedido, setUltimoPedido] = useState(() => {
+  const guardados = cargarPedidos()
+  return guardados.at(-1) ?? null
+})
 
   // Guardar el carrito cuando cambie
   useEffect(() => {
@@ -66,6 +107,28 @@ function App() {
       // Si falla localStorage, el carrito sigue en memoria
     }
   }, [carrito])
+
+  useEffect(() => {
+  try {
+    localStorage.setItem(
+      CLAVE_PRODUCTOS,
+      JSON.stringify(productos)
+    )
+  } catch {
+    console.error('No fue posible guardar los productos')
+  }
+}, [productos])
+
+useEffect(() => {
+  try {
+    localStorage.setItem(
+      CLAVE_PEDIDOS,
+      JSON.stringify(pedidos)
+    )
+  } catch {
+    console.error('No fue posible guardar los pedidos')
+  }
+}, [pedidos])
 
   function agregarProducto(id, cantidad = 1) {
     const producto = productos.find((p) => p.id === id)
@@ -142,6 +205,80 @@ function App() {
     0
   )
 
+  
+function comprar(datos) {
+  if (carrito.length === 0) {
+    return 'El carrito está vacío.'
+  }
+
+  const items = []
+
+  for (const item of carrito) {
+    const producto = productos.find((p) => p.id === item.id)
+
+    if (!producto) {
+      return 'Uno de los productos ya no existe.'
+    }
+
+    if (
+      !Number.isInteger(item.cantidad) ||
+      item.cantidad < 1 ||
+      item.cantidad > producto.stock
+    ) {
+      return `Stock insuficiente para ${producto.nombre}.`
+    }
+
+    items.push({
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      cantidad: item.cantidad
+    })
+  }
+
+  const subtotal = items.reduce(
+    (total, item) => total + item.precio * item.cantidad,
+    0
+  )
+
+  const pedido = {
+    id: `PED-${Date.now()}`,
+    fecha: new Date().toISOString(),
+    ...datos,
+    items,
+    subtotal,
+    total: subtotal + datos.despacho
+  }
+
+  setUltimoPedido(pedido)
+  setPedidos((anteriores) => [...anteriores, pedido])
+
+  if (datos.estado === 'Aprobada') {
+    setProductos((anteriores) =>
+      anteriores.map((producto) => {
+        const comprado = items.find(
+          (item) => item.id === producto.id
+        )
+
+        if (!comprado) return producto
+
+        return {
+          ...producto,
+          stock: producto.stock - comprado.cantidad
+        }
+      })
+    )
+
+    vaciarCarrito()
+    navigate('/compra-aprobada')
+  } else {
+    navigate('/compra-rechazada')
+  }
+
+  return ''
+}
+
+
   return (
     <>
       <Header />
@@ -170,17 +307,29 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Inicio onAgregar={agregarProducto} />}
+          element={ 
+          <Inicio
+            productos={productos}
+            onAgregar={agregarProducto}
+          />}
         />
 
         <Route
           path="/catalogo"
-          element={<Catalogo onAgregar={agregarProducto} />}
+          element={
+          <Catalogo
+            productos={productos}
+            onAgregar={agregarProducto}
+          />}
         />
 
         <Route
           path="/producto/:id"
-          element={<Detalle onAgregar={agregarProducto} />}
+          element={  
+          <Detalle
+            productos={productos}
+            onAgregar={agregarProducto}
+          />}
         />
 
         <Route
@@ -195,6 +344,36 @@ function App() {
             />
           }
         />
+        <Route
+            path="/checkout"
+            element={
+              <Checkout
+                carrito={carrito}
+                productos={productos}
+                onComprar={comprar}
+              />
+            }
+          />
+
+        <Route
+            path="/compra-aprobada"
+            element={
+              <ResultadoCompra
+                pedido={ultimoPedido}
+                estado="Aprobada"
+              />
+            }
+          />
+
+        <Route
+            path="/compra-rechazada"
+            element={
+              <ResultadoCompra
+                pedido={ultimoPedido}
+                estado="Rechazada"
+          />
+            }
+          />
       </Routes>
     </>
   )

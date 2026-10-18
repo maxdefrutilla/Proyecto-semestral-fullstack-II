@@ -14,7 +14,7 @@ const imagenes = {
   'indumentaria.jpg': indumentaria
 }
 
-function Detalle({ onAgregar }) {
+function Detalle({ productos, onAgregar }) {
   const { id } = useParams()
 
   const producto = productos.find(

@@ -208,17 +208,15 @@ function Carrito({
                 <strong>{dinero(total)}</strong>
               </p>
 
-              <button
-                type="button"
+              <Link
+                to="/checkout"
                 className="btn btn-primary w-100"
-                disabled
               >
                 Continuar con la compra
-              </button>
+              </Link>
 
               <p className="small text-muted mt-3">
-                Compra simulada. El checkout se implementará
-                en la siguiente etapa.
+                Compra simulada.
               </p>
             </div>
           </div>

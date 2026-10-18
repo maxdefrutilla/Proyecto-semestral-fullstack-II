@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom'
 
 import Hero from '../components/Hero.jsx'
@@ -7,9 +6,8 @@ import ServiciosInicio from '../components/ServiciosInicio.jsx'
 import ContactoInicio from '../components/ContactoInicio.jsx'
 import ListaProductos from '../components/ListaProductos.jsx'
 
-import productos from '../data/productos.json'
 
-function Inicio({ onAgregar }) {
+function Inicio({ productos, onAgregar }) {
 
   const categorias = [
     'ascensores',

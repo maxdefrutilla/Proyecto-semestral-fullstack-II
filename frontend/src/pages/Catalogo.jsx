@@ -10,7 +10,7 @@ const categorias = [
   { id: 'indumentaria', nombre: 'Indumentaria' }
 ]
 
-function Catalogo({ onAgregar }){
+function Catalogo({ productos, onAgregar }){
   const [categoria, setCategoria] = useState('todas')
   const [busqueda, setBusqueda] = useState('')
 
