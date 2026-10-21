@@ -21,8 +21,6 @@ import Administracion from './pages/Administracion'
 import './App.css'
 
 function App() {
-  // Estado compartido de la tienda. Vive aca y se entrega por props
-  // a las paginas que lo necesitan (admin, acceso y categorias).
   const [productos, setProductos] = useState(productosIniciales)
   const [categorias, setCategorias] = useState(categoriasIniciales)
   const [usuarios, setUsuarios] = useState(usuariosIniciales)
@@ -45,7 +43,6 @@ function App() {
 
   function eliminarCategoria(id) {
     if (categorias.length === 1) return 'Debe quedar al menos una categoría.'
-    // Los productos guardan el codigo de la categoria, no su id.
     let codigo = ''
     for (let i = 0; i < categorias.length; i++)
       if (categorias[i].id === id) codigo = categorias[i].codigo
@@ -60,7 +57,6 @@ function App() {
   function guardarUsuario(cuenta, nuevo) {
     if (nuevo) setUsuarios(crearRegistro(usuarios, cuenta))
     else setUsuarios(editarRegistro(usuarios, cuenta))
-    // Si el administrador edita su propia cuenta, la sesion se actualiza.
     if (!nuevo && usuario && usuario.id === cuenta.id) setUsuario(cuenta)
   }
 
@@ -77,7 +73,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/catalogo" element={<Catalogo />} />
-          {/* Esta ruta la completara el catalogo comercial del equipo. */}
           <Route path="/categoria/:id" element={<Catalogo />} />
           <Route path="/categorias" element={<Categorias categorias={categorias} />} />
           <Route path="/nosotros" element={<Nosotros />} />

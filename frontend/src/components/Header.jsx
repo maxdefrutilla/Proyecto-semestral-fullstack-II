@@ -28,13 +28,11 @@ function cerrarMenu() {
         >
           <div className="container">
 
-            {/* LOGOTIPO */}
         <Link className="brand navbar-brand" to="/">
             <span className="brand-mark">IM</span>
             <span>IN<em>MAQUI</em></span>
         </Link>
 
-            {/* BOTÓN DEL MENÚ MÓVIL */}
             <button
               className="navbar-toggler"
               type="button"
@@ -46,7 +44,6 @@ function cerrarMenu() {
               <span className="navbar-toggler-icon"></span>
             </button>
 
-            {/* ENLACES DE NAVEGACIÓN */}
             <div
               className={
                 'collapse navbar-collapse ' +

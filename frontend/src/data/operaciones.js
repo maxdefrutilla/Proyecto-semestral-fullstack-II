@@ -1,5 +1,3 @@
-// Funciones sencillas para trabajar con los arreglos del estado.
-// Cada cambio devuelve un arreglo nuevo para que React actualice la pantalla.
 export function buscarRegistro(lista, id) {
   for (let i = 0; i < lista.length; i++) {
     if (lista[i].id === id) return lista[i];

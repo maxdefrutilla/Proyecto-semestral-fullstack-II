@@ -1,4 +1,3 @@
-// Recibe datos por props y avisa al padre cuando cambia el input.
 export default function Campo(props) {
   return (
     <div className="mb-3">
