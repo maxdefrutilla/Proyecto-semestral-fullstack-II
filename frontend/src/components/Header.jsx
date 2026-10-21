@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
-function Header() {
+function Header(props) {
   const [menuAbierto, setMenuAbierto] = useState(false)
 
 function alternarMenu() {
@@ -66,7 +66,50 @@ function cerrarMenu() {
       Catálogo
     </NavLink>
   </li>
+
+  <li className="nav-item">
+    <NavLink className="nav-link" to="/categorias" onClick={cerrarMenu}>
+      Categorías
+    </NavLink>
+  </li>
+
+  <li className="nav-item">
+    <NavLink className="nav-link" to="/nosotros" onClick={cerrarMenu}>
+      Nosotros
+    </NavLink>
+  </li>
+
+  <li className="nav-item">
+    <NavLink className="nav-link" to="/contacto" onClick={cerrarMenu}>
+      Contacto
+    </NavLink>
+  </li>
+
+  <li className="nav-item">
+    <NavLink className="nav-link" to="/blog" onClick={cerrarMenu}>
+      Blog
+    </NavLink>
+  </li>
 </ul>
+
+<div className="navbar-actions">
+  <NavLink
+    className="btn btn-outline-primary btn-sm"
+    to="/acceso"
+    onClick={cerrarMenu}
+  >
+    {props.usuario ? 'Mi cuenta' : 'Ingresar'}
+  </NavLink>
+  {props.usuario && props.usuario.rol === 'Administrador' && (
+    <NavLink
+      className="btn btn-primary btn-sm"
+      to="/admin"
+      onClick={cerrarMenu}
+    >
+      Admin
+    </NavLink>
+  )}
+</div>
             </div>
 
           </div>
