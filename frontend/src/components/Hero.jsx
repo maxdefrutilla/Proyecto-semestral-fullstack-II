@@ -6,19 +6,26 @@ import imagenObra from '../assets/img/obra.jpg'
 import imagenCamiones from '../assets/img/camiones.jpg'
 
 function Hero() {
-      const carruselRef = useRef(null)
+  const carruselRef = useRef(null)
 
   useEffect(() => {
-    const carrusel = Carousel.getOrCreateInstance(carruselRef.current, {
-      interval: 3000,
-      ride: 'carousel',
-      pause: 'hover',
+    const elemento = carruselRef.current
+    if (!elemento) return
+
+    // Un solo temporizador controla la rotación desde el primer montaje.
+    const carrusel = Carousel.getOrCreateInstance(elemento, {
+      interval: false,
+      ride: false,
+      pause: false,
       touch: true
     })
 
-    carrusel.cycle()
+    const intervalo = window.setInterval(() => {
+      carrusel.next()
+    }, 5000)
 
     return () => {
+      window.clearInterval(intervalo)
       carrusel.dispose()
     }
   }, [])

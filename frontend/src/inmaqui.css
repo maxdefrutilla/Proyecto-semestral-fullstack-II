@@ -1076,14 +1076,7 @@ button,input,select,textarea {
   }
 }
 
-/* Respetar preferencias de movimiento reducido */
-@media (prefers-reduced-motion: reduce) {
-  .hero.carousel-fade .carousel-item {
-    transition: none;
-  }
-
-  /* Reservar espacio inferior para los controles */
-
+/* Separacion final del contenido y los controles del carrusel. */
 .hero .hero-copy {
   padding-top: 65px;
   padding-bottom: 125px;
@@ -1101,8 +1094,7 @@ button,input,select,textarea {
   bottom: 13px;
 }
 
-/* Ajuste para pantallas pequeñas */
-
+/* Ajuste adicional para celulares. */
 @media (max-width: 767px) {
   .hero .carousel-item {
     height: auto;
@@ -1115,10 +1107,17 @@ button,input,select,textarea {
   }
 }
 
-/* Prueba temporal de transición */
-
+/* Transicion del carrusel, aplicable independientemente de la preferencia
+   de movimiento. Se conserva !important por el conflicto previo con Bootstrap. */
 #portada.carousel-fade .carousel-item {
-  transition: opacity 1.2s ease-in-out !important;
+  transition: opacity 0.9s ease-in-out !important;
 }
 
+/* Accesibilidad: desactivar transiciones cuando el usuario lo solicita.
+   Esta regla debe aparecer despues de la transicion normal. */
+/*@media (prefers-reduced-motion: reduce) {
+  #portada.carousel-fade .carousel-item {
+    transition: none !important;
+  }
 }
+*/

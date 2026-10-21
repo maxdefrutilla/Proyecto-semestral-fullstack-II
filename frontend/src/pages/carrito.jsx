@@ -214,10 +214,6 @@ function Carrito({
               >
                 Continuar con la compra
               </Link>
-
-              <p className="small text-muted mt-3">
-                Compra simulada.
-              </p>
             </div>
           </div>
         </aside>

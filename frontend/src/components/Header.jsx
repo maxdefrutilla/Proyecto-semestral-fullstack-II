@@ -1,16 +1,25 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
+const enlaces = [
+  { ruta: '/', texto: 'Inicio', exacta: true },
+  { ruta: '/catalogo', texto: 'Catálogo' },
+  { ruta: '/categorias', texto: 'Categorías' },
+  { ruta: '/ofertas', texto: 'Ofertas' },
+  { ruta: '/nosotros', texto: 'Nosotros' },
+  { ruta: '/contacto', texto: 'Contacto' },
+]
+
 function Header() {
   const [menuAbierto, setMenuAbierto] = useState(false)
 
-function alternarMenu() {
-  setMenuAbierto(anterior => !anterior)
-}
+  function alternarMenu() {
+    setMenuAbierto((anterior) => !anterior)
+  }
 
-function cerrarMenu() {
-  setMenuAbierto(false)
-}
+  function cerrarMenu() {
+    setMenuAbierto(false)
+  }
 
   return (
     <>
@@ -22,19 +31,13 @@ function cerrarMenu() {
       </div>
 
       <header className="site-header">
-        <nav
-          className="navbar navbar-expand-lg"
-          aria-label="Navegación principal"
-        >
+        <nav className="navbar navbar-expand-lg" aria-label="Navegación principal">
           <div className="container">
+            <Link className="brand navbar-brand" to="/" onClick={cerrarMenu}>
+              <span className="brand-mark">IM</span>
+              <span>IN<em>MAQUI</em></span>
+            </Link>
 
-            {/* LOGOTIPO */}
-        <Link className="brand navbar-brand" to="/">
-            <span className="brand-mark">IM</span>
-            <span>IN<em>MAQUI</em></span>
-        </Link>
-
-            {/* BOTÓN DEL MENÚ MÓVIL */}
             <button
               className="navbar-toggler"
               type="button"
@@ -43,32 +46,28 @@ function cerrarMenu() {
               aria-expanded={menuAbierto}
               aria-label="Abrir o cerrar menú"
             >
-              <span className="navbar-toggler-icon"></span>
+              <span className="navbar-toggler-icon" />
             </button>
 
-            {/* ENLACES DE NAVEGACIÓN */}
             <div
-              className={
-                'collapse navbar-collapse ' +
-                (menuAbierto ? 'show' : '')
-              }
+              className={`collapse navbar-collapse${menuAbierto ? ' show' : ''}`}
               id="menuPrincipal"
             >
-              <ul className="navbar-nav mx-auto">
-  <li className="nav-item">
-    <NavLink className="nav-link" to="/" onClick={cerrarMenu} end>
-      Inicio
-    </NavLink>
-  </li>
-
-  <li className="nav-item">
-    <NavLink className="nav-link" to="/catalogo" onClick={cerrarMenu}>
-      Catálogo
-    </NavLink>
-  </li>
-</ul>
+              <ul className="navbar-nav mx-auto flex-wrap justify-content-center">
+                {enlaces.map((enlace) => (
+                  <li className="nav-item" key={enlace.ruta}>
+                    <NavLink
+                      className="nav-link"
+                      to={enlace.ruta}
+                      end={enlace.exacta ?? false}
+                      onClick={cerrarMenu}
+                    >
+                      {enlace.texto}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
             </div>
-
           </div>
         </nav>
       </header>

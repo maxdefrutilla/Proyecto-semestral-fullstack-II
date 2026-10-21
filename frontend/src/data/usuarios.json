@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "nombre": "Administrador INMAQUI",
+    "usuario": "admin",
+    "correo": "admin@inmaqui.cl",
+    "clave": "Admin!9",
+    "rol": "Administrador",
+    "direccion": "",
+    "comuna": ""
+  },
+  {
+    "id": 2,
+    "nombre": "Cliente de prueba",
+    "usuario": "cliente",
+    "correo": "cliente@ejemplo.cl",
+    "clave": "Cliente!9",
+    "rol": "Cliente",
+    "direccion": "Calle de ejemplo 123",
+    "comuna": "Santiago"
+  }
+]

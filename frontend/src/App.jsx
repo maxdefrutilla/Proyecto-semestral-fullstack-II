@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, Route, Routes } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 
 import Checkout from './pages/Checkout.jsx'
 import ResultadoCompra from './pages/ResultadoCompra.jsx'
@@ -10,12 +9,61 @@ import Catalogo from './pages/Catalogo.jsx'
 import Detalle from './pages/Detalle.jsx'
 import Carrito from './pages/Carrito.jsx'
 
+import Nosotros from './pages/Nosotros.jsx'
+import Contacto from './pages/Contacto.jsx'
+import Arriendos from './pages/Arriendos.jsx'
+import Blog from './pages/Blog.jsx'
+import Creditos from './pages/Creditos.jsx'
+import Footer from './components/Footer.jsx'
+
+import usuariosIniciales from './data/usuarios.json'
+import Acceso from './pages/Acceso.jsx'
+import Perfil from './pages/Perfil.jsx'
+
+import Ofertas from './pages/Ofertas.jsx'
+
+
+import Categorias from './pages/Categorias.jsx'
+import Administracion from './pages/Administracion.jsx'
+
 import productosIniciales from './data/productos.json'
-
+import categoriasIniciales from './data/categorias.json'
+//carrito
 const CLAVE_CARRITO = 'inmaqui.carrito'
-
+//productos y pedidos
 const CLAVE_PRODUCTOS = 'inmaqui.productos'
+const CLAVE_CATEGORIAS = 'inmaqui.categorias'
 const CLAVE_PEDIDOS = 'inmaqui.pedidos'
+//usuarios y sesion
+const CLAVE_USUARIOS = 'inmaqui.usuarios'
+const CLAVE_SESION = 'inmaqui.sesion'
+
+
+function cargarUsuarios() {
+  try {
+    const guardados = localStorage.getItem(CLAVE_USUARIOS)
+    if (!guardados) return usuariosIniciales
+
+    const datos = JSON.parse(guardados)
+    return Array.isArray(datos) ? datos : usuariosIniciales
+  } catch {
+    return usuariosIniciales
+  }
+}
+
+function cargarSesion() {
+  try {
+    const id = JSON.parse(
+      sessionStorage.getItem(CLAVE_SESION)
+    )
+
+    const usuarios = cargarUsuarios()
+
+    return usuarios.find((u) => u.id === id)?.id ?? null
+  } catch {
+    return null
+  }
+}
 
 function cargarProductos() {
   try {
@@ -45,6 +93,15 @@ function cargarPedidos() {
   }
 }
 
+function cargarCategorias() {
+  try {
+    const datos = JSON.parse(localStorage.getItem(CLAVE_CATEGORIAS))
+    return Array.isArray(datos) ? datos : categoriasIniciales
+  } catch {
+    return categoriasIniciales
+  }
+}
+
 function cargarCarrito() {
   try {
     const guardado = localStorage.getItem(CLAVE_CARRITO)
@@ -54,7 +111,7 @@ function cargarCarrito() {
     if (!Array.isArray(datos)) return []
 
     return datos.flatMap((item) => {
-      const producto = productos.find(
+      const producto = cargarProductos().find(
         (p) => p.id === item?.id
       )
 
@@ -88,6 +145,11 @@ function App() {
   const [carrito, setCarrito] = useState(cargarCarrito)
   const [aviso, setAviso] = useState('')
   const navigate = useNavigate()
+  const [usuarios, setUsuarios] = useState(cargarUsuarios)
+  const [usuarioId, setUsuarioId] = useState(cargarSesion)
+  const usuario = usuarios.find(
+    (cuenta) => cuenta.id === usuarioId
+  ) ?? null
 
 const [productos, setProductos] = useState(cargarProductos)
 const [pedidos, setPedidos] = useState(cargarPedidos)
@@ -95,6 +157,27 @@ const [ultimoPedido, setUltimoPedido] = useState(() => {
   const guardados = cargarPedidos()
   return guardados.at(-1) ?? null
 })
+
+const [categorias, setCategorias] = useState(cargarCategorias)
+
+
+useEffect(() => {
+  localStorage.setItem(
+    CLAVE_USUARIOS,
+    JSON.stringify(usuarios)
+  )
+}, [usuarios])
+
+useEffect(() => {
+  if (usuarioId === null) {
+    sessionStorage.removeItem(CLAVE_SESION)
+  } else {
+    sessionStorage.setItem(
+      CLAVE_SESION,
+      JSON.stringify(usuarioId)
+    )
+  }
+}, [usuarioId])
 
   // Guardar el carrito cuando cambie
   useEffect(() => {
@@ -129,6 +212,57 @@ useEffect(() => {
     console.error('No fue posible guardar los pedidos')
   }
 }, [pedidos])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CLAVE_CATEGORIAS, JSON.stringify(categorias))
+    } catch {
+      console.error('No fue posible guardar las categorías')
+    }
+  }, [categorias])
+
+  function guardarProducto(producto, esNuevo) {
+    setProductos(prev => esNuevo
+      ? [...prev, producto]
+      : prev.map(p => p.id === producto.id ? producto : p))
+    setCarrito(prev => prev.map(item => {
+      if (item.id !== producto.id) return item
+      return { ...item, cantidad: Math.min(item.cantidad, producto.stock, 99) }
+    }).filter(item => item.cantidad > 0))
+  }
+
+  function eliminarProductoAdmin(id) {
+    setProductos(prev => prev.filter(p => p.id !== id))
+    setCarrito(prev => prev.filter(item => item.id !== id))
+  }
+
+  function guardarCategoria(categoria, esNueva) {
+    setCategorias(prev => esNueva
+      ? [...prev, categoria]
+      : prev.map(c => c.id === categoria.id ? categoria : c))
+  }
+
+  function eliminarCategoria(id) {
+    const categoria = categorias.find(c => c.id === id)
+    if (!categoria) return 'Categoría no encontrada.'
+    if (productos.some(p => p.categoria === categoria.codigo)) {
+      return 'No se puede eliminar una categoría con productos asociados.'
+    }
+    setCategorias(prev => prev.filter(c => c.id !== id))
+    return 'Categoría eliminada.'
+  }
+
+  function guardarUsuarioAdmin(cuenta, esNuevo) {
+    setUsuarios(prev => esNuevo
+      ? [...prev, cuenta]
+      : prev.map(u => u.id === cuenta.id ? cuenta : u))
+  }
+
+  function eliminarUsuarioAdmin(id) {
+    if (usuarioId === id) return 'No puedes eliminar tu propia cuenta activa.'
+    setUsuarios(prev => prev.filter(u => u.id !== id))
+    return 'Usuario eliminado.'
+  }
 
   function agregarProducto(id, cantidad = 1) {
     const producto = productos.find((p) => p.id === id)
@@ -245,6 +379,7 @@ function comprar(datos) {
     id: `PED-${Date.now()}`,
     fecha: new Date().toISOString(),
     ...datos,
+    usuarioId: usuario?.id ?? null,
     items,
     subtotal,
     total: subtotal + datos.despacho
@@ -279,16 +414,64 @@ function comprar(datos) {
 }
 
 
+function registrarUsuario(nuevoUsuario) {
+  setUsuarios((anteriores) => [
+    ...anteriores,
+    nuevoUsuario
+  ])
+}
+
+function ingresar(usuarioSeleccionado) {
+  setUsuarioId(usuarioSeleccionado.id)
+}
+
+function salir() {
+  setUsuarioId(null)
+}
+
+function guardarPerfil(datosActualizados) {
+  setUsuarios((anteriores) =>
+    anteriores.map((cuenta) =>
+      cuenta.id === datosActualizados.id
+        ? { ...cuenta, ...datosActualizados }
+        : cuenta
+    )
+  )
+}
+
+
+
   return (
     <>
       <Header />
 
-      {/* Acceso temporal al carrito */}
-      <div className="container d-flex justify-content-end py-2">
-        <Link className="btn btn-outline-primary btn-sm" to="/carrito">
-          Carrito ({unidades})
-        </Link>
-      </div>
+      
+<div className="container d-flex justify-content-end gap-2 py-2">
+  {usuario ? (
+    <>
+    {/* Acceso temporal de usuarios */}
+      <Link to="/perfil" className="btn btn-outline-secondary btn-sm">
+        Mi perfil
+      </Link>
+
+      <button
+        type="button"
+        className="btn btn-outline-secondary btn-sm"
+        onClick={salir}
+      >
+        Cerrar sesión
+      </button>
+    </>
+  ) : (
+    <Link to="/acceso" className="btn btn-outline-secondary btn-sm">
+      Iniciar sesión
+    </Link>
+  )}
+
+  <Link to="/carrito" className="btn btn-outline-primary btn-sm">
+    Carrito ({unidades})
+  </Link>
+</div>
 
       {aviso && (
         <div className="container mt-2">
@@ -319,6 +502,7 @@ function comprar(datos) {
           element={
           <Catalogo
             productos={productos}
+            categorias={categorias}
             onAgregar={agregarProducto}
           />}
         />
@@ -374,7 +558,97 @@ function comprar(datos) {
           />
             }
           />
+          
+        <Route path="/nosotros" element={<Nosotros />} />
+        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/arriendos" element={<Arriendos />} />
+        <Route path="/creditos" element={<Creditos />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/elegir-equipo" element={<Blog articulo={1} />} />
+        <Route path="/blog/planificar-arriendo" element={<Blog articulo={2} />} />
+
+        
+        <Route
+          path="/acceso"
+          element={
+            <Acceso
+              usuarios={usuarios}
+              usuario={usuario}
+              registrar={registrarUsuario}
+              ingresar={ingresar}
+              salir={salir}
+            />
+          }
+        />
+
+        <Route
+          path="/perfil"
+          element={
+            <Perfil
+              usuario={usuario}
+              pedidos={pedidos}
+              guardar={guardarPerfil}
+            />
+          }
+        />
+       <Route
+        path="/categorias"
+        element={<Categorias categorias={categorias} />}
+      />
+
+        <Route
+          path="/ofertas"
+          element={
+            <Ofertas
+              productos={productos}
+              onAgregar={agregarProducto}
+            />
+          }
+        />
+        <Route
+          path="/categoria/:id"
+          element={
+            <Catalogo
+              productos={productos}
+              categorias={categorias}
+              onAgregar={agregarProducto}
+            />
+          }
+        />
+
+
+        <Route
+          path="/administracion"
+          element={
+            <Administracion
+              usuario={usuario}
+              productos={productos}
+              categorias={categorias}
+              usuarios={usuarios}
+              pedidos={pedidos}
+              guardarProducto={guardarProducto}
+              eliminarProducto={eliminarProductoAdmin}
+              guardarCategoria={guardarCategoria}
+              eliminarCategoria={eliminarCategoria}
+              guardarUsuario={guardarUsuarioAdmin}
+              eliminarUsuario={eliminarUsuarioAdmin}
+            />
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <main className="container py-5 text-center">
+              <h1>Página no encontrada</h1>
+              <p>La dirección que buscas no existe en INMAQUI.</p>
+              <Link to="/" className="btn btn-primary">
+                Volver al inicio
+              </Link>
+            </main>
+          }
+        />
       </Routes>
+      <Footer />
     </>
   )
 }

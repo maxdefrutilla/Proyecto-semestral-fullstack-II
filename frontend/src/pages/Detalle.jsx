@@ -1,6 +1,5 @@
 
 import { Link, useParams } from 'react-router-dom'
-import productos from '../data/productos.json'
 
 import ascensores from '../assets/img/ascensores.jpg'
 import camiones from '../assets/img/camiones.jpg'

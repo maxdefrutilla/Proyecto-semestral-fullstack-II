@@ -86,7 +86,8 @@ function Checkout({ carrito, productos, onComprar }) {
       <h1>Completa los datos de tu compra.</h1>
 
       <p className="text-muted">
-        Simulación académica. No ingreses datos bancarios.
+        Ingresa tus datos y selecciona el método de entrega
+        para continuar con tu pedido.
       </p>
 
       <div className="row g-4 mt-2">
@@ -173,7 +174,7 @@ function Checkout({ carrito, productos, onComprar }) {
 
             <div className="mb-4">
               <label htmlFor="resultado" className="form-label">
-                Resultado simulado del pago
+                Resultado de la transacción (modo de prueba)
               </label>
               <select
                 id="resultado"
@@ -187,7 +188,7 @@ function Checkout({ carrito, productos, onComprar }) {
             </div>
 
             <button type="submit" className="btn btn-primary">
-              Simular pago
+              Confirmar pedido
             </button>
           </form>
         </div>

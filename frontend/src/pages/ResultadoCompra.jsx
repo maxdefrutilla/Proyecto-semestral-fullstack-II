@@ -28,14 +28,14 @@ function ResultadoCompra({ pedido, estado }) {
       >
         <h1 className="h3">
           {aprobada
-            ? 'Tu compra de prueba fue aprobada'
-            : 'El pago de prueba fue rechazado'}
+            ? '¡Tu pedido fue confirmado!'
+            : 'No pudimos procesar tu pedido'}
         </h1>
 
         <p className="mb-0">
           {aprobada
-            ? 'Se registró el pedido y se descontó el stock.'
-            : 'No se descontó stock y tu carrito se conserva.'}
+            ? 'Tu pedido ha sido registrado correctamente.'
+            : 'La operación no se completó. Puedes intentarlo nuevamente.'}
         </p>
       </div>
 
