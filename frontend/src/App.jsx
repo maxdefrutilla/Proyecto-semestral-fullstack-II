@@ -44,7 +44,7 @@ function App() {
   }
 
   function eliminarCategoria(id) {
-    if (categorias.length === 1) return 'Debe quedar al menos una categoria.'
+    if (categorias.length === 1) return 'Debe quedar al menos una categoría.'
     // Los productos guardan el codigo de la categoria, no su id.
     let codigo = ''
     for (let i = 0; i < categorias.length; i++)
@@ -54,7 +54,7 @@ function App() {
         return 'No se puede eliminar: tiene productos asociados.'
     }
     setCategorias(eliminarRegistro(categorias, id))
-    return 'Categoria eliminada.'
+    return 'Categoría eliminada.'
   }
 
   function guardarUsuario(cuenta, nuevo) {
