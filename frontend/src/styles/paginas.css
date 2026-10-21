@@ -1,0 +1,11 @@
+/* Estilos propios de las paginas complementarias (Blog).
+   Se mantienen fuera de inmaqui.css para no chocar con el trabajo del equipo. */
+.blog-image {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
+.lectura {
+  max-width: 850px;
+}
