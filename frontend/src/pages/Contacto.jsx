@@ -16,7 +16,8 @@ export default function Contacto() {
               <span className="eyebrow">Estamos para orientarte</span>
               <h2>El primer paso es conversar.</h2>
               <p className="text-muted mt-3">
-                Consultas sobre equipos, arriendo y servicios.
+                Resolvemos tus dudas sobre maquinaria, herramientas,
+                disponibilidad de productos y opciones de compra.
               </p>
               <hr />
               <h3 className="fs-6">Dónde encontrarnos</h3>

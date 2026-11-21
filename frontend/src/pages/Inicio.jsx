@@ -5,7 +5,7 @@ import CategoriasInicio from '../components/CategoriasInicio.jsx'
 import ServiciosInicio from '../components/ServiciosInicio.jsx'
 import ContactoInicio from '../components/ContactoInicio.jsx'
 import ListaProductos from '../components/ListaProductos.jsx'
-
+import CamionAnimado from '../components/CamionAnimado.jsx'
 
 function Inicio({ productos, onAgregar }) {
 
@@ -28,6 +28,8 @@ function Inicio({ productos, onAgregar }) {
       <Hero />
 
       <ServiciosInicio mostrarFranja={true} />
+
+      <CamionAnimado />
 
       <CategoriasInicio />
 

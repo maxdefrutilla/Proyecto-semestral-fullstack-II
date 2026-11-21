@@ -4,35 +4,35 @@ import { Link } from 'react-router-dom'
 const servicios = [
   {
     numero: '01',
-    titulo: 'Venta de equipos',
+    titulo: 'Venta de maquinaria',
     descripcion:
-      'Compara capacidades y encuentra la alternativa para tu trabajo.',
+      'Encuentra maquinaria, herramientas y equipos para tus proyectos.',
     ruta: '/catalogo'
   },
   {
     numero: '02',
-    titulo: 'Arriendo a tu medida',
+    titulo: 'Ofertas en equipos',
     descripcion:
-      'Planes por hora, día y mes para diferentes etapas de obra.',
-    ruta: '/arriendos'
+      'Revisa nuestra selección de productos con precios especiales.',
+    ruta: '/ofertas'
   },
   {
     numero: '03',
-    titulo: 'Servicio técnico',
+    titulo: 'Consultas sobre productos',
     descripcion:
-      'Mantención preventiva, revisión y asesoría para tus equipos.',
-    ruta: '/arriendos'
+      'Contáctanos para resolver tus dudas sobre los equipos disponibles.',
+    ruta: '/contacto'
   }
 ]
 
 function ServiciosInicio({ mostrarFranja = false }) {
-      if (mostrarFranja) {
+  if (mostrarFranja) {
     return (
       <div className="service-strip">
         <div className="container">
-          <span>✓ Venta y arriendo de equipos</span>
-          <span>✓ Asesoría para tu proyecto</span>
-          <span>✓ Maquinaria y protección en un lugar</span>
+          <span>✓ Venta de maquinaria y equipamiento</span>
+          <span>✓ Retiro gratuito de productos</span>
+          <span>✓ Despacho disponible en la Región Metropolitana</span>
         </div>
       </div>
     )
@@ -45,9 +45,9 @@ function ServiciosInicio({ mostrarFranja = false }) {
           <div className="section-heading">
             <div>
               <span className="eyebrow">
-                03 / Más que maquinaria
+                03 / Compra en INMAQUI
               </span>
-              <h2>Te acompañamos en cada etapa.</h2>
+              <h2>Todo lo que necesitas para equipar tu proyecto.</h2>
             </div>
           </div>
 

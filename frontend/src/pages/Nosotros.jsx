@@ -19,8 +19,8 @@ export default function Nosotros() {
           <span className="eyebrow">Nosotros</span>
           <h1>Equipos para construir. Personas para acompañar.</h1>
           <p>
-            Somos INMAQUI: una empresa dedicada a la venta, el arriendo y los
-            servicios de maquinaria para proyectos de construcción.
+            Somos INMAQUI: una empresa dedicada a la venta de maquinaria,
+            herramientas y equipamiento para proyectos de construcción.
           </p>
         </div>
       </section>
@@ -40,14 +40,13 @@ export default function Nosotros() {
               <p className="mt-4">
                 En INMAQUI reunimos maquinaria, herramientas e indumentaria para
                 apoyar el trabajo en terreno. Nuestra propuesta es facilitar la
-                elección de equipos según la tarea, la capacidad y el tiempo de
-                uso que requiere cada proyecto.
+                elección de equipos según la tarea, la capacidad y características técnicas que requiere cada proyecto.
               </p>
               <p className="text-muted">
                 Desde Santiago, buscamos acompañar a constructoras, contratistas
-                y equipos de trabajo con una atención cercana. Contamos con
-                alternativas de compra, arriendo y servicio técnico en un mismo
-                lugar.
+                y equipos de trabajo con una atención cercana. Ofrecemos
+                maquinaria, herramientas y equipamiento para la venta,
+                con retiro gratuito y despacho dentro de la Región Metropolitana.
               </p>
               <Link className="btn btn-primary mt-2" to="/contacto">
                 Conversemos{" "}
@@ -67,9 +66,9 @@ export default function Nosotros() {
                 <span className="eyebrow">Lo que nos mueve</span>
                 <h2>Nuestra misión</h2>
                 <p className="mt-3 mb-0">
-                  Facilitar el acceso a equipos adecuados para cada obra, con
-                  información clara y acompañamiento durante la compra, el
-                  arriendo y la mantención.
+                  Facilitar la compra de maquinaria y equipamiento para cada obra,
+                  ofreciendo información clara sobre los productos, sus
+                  características técnicas y las alternativas disponibles.
                 </p>
               </div>
             </div>

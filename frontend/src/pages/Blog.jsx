@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import Encabezado from "../components/Encabezado";
 import imagenes from "../data/imagenes";
-
+// TODO ENTREGA FINAL:
+// Integrante 2: convertir Blog.jsx en un blog dinámico.
+// Los artículos deben crearse y editarse mediante Tiptap.
+// Integrante 1: guardar artículos en MySQL mediante REST.
+// Sanitizar HTML en backend y con DOMPurify en React.
+// Reemplazar rutas estáticas por /blog/:slug.
 export default function Blog(props) {
   if (props.articulo === 1)
     return (
@@ -13,8 +18,7 @@ export default function Blog(props) {
         <section className="section">
           <div className="container lectura">
             <p>
-              Empieza por definir la tarea, el lugar de trabajo y el tiempo de
-              uso. Esa información permite comparar alternativas con un criterio
+              Empieza por definir la tarea, el lugar de trabajo y la reglamentación. Esa información permite comparar alternativas con un criterio
               común.
             </p>
             <h2 className="fs-4">Capacidad y dimensiones</h2>
@@ -23,10 +27,11 @@ export default function Blog(props) {
               con el proveedor los requerimientos de instalación y operación del
               modelo real.
             </p>
-            <h2 className="fs-4">Compra o arriendo</h2>
+            <h2 className="fs-4">Antes de comprar</h2>
             <p>
-              Considera si el equipo se necesita para una etapa puntual o para
-              distintos proyectos. Cotiza ambas alternativas antes de decidir.
+              Compara las características técnicas, el precio y la capacidad
+              de los equipos disponibles. Selecciona el producto que mejor
+              se adapte a las necesidades de tu proyecto.
             </p>
             <Link to="/blog">Volver al blog</Link>
           </div>
@@ -38,26 +43,19 @@ export default function Blog(props) {
       <>
         <Encabezado
           seccion="Blog"
-          titulo="Cómo preparar una consulta de arriendo."
+          titulo="Cómo elegir entre retiro y despacho"
         />
         <section className="section">
           <div className="container lectura">
+            <h2 className="fs-4">Retiro de productos:</h2>
             <p>
-              Una consulta clara permite revisar equipos y plazos con menos
-              intercambios.
+              Gratuito y sin restricción regional.
             </p>
-            <h2 className="fs-4">Los datos de tu proyecto</h2>
+            <h2 className="fs-4">Despacho</h2>
             <p>
-              Indica el tipo de tarea, las fechas, la ubicación y la capacidad
-              requerida. Agrega si necesitas operador o traslado.
+              Disponible exclusivamente en la Región Metropolitana, con un costo de $50.000 para compras inferiores a $1.000.000 y $100.000 desde ese monto.
             </p>
-            <h2 className="fs-4">Antes de confirmar</h2>
-            <p>
-              Consulta qué incluye la tarifa y cuáles son las condiciones de
-              entrega, retiro y mantención. Los valores de este sitio son
-              ejemplos académicos.
-            </p>
-            <Link to="/arriendos">Consultar un plan</Link>
+            <Link to="/catalogo">Explorar catálogo</Link>
             <br />
             <Link to="/blog">Volver al blog</Link>
           </div>
@@ -98,9 +96,11 @@ export default function Blog(props) {
                 />
                 <div className="product-body">
                   <h2 className="fs-4">
-                    Cómo preparar una consulta de arriendo
+                    Cómo elegir entre retiro y despacho
                   </h2>
-                  <p>Los datos que ayudan a definir un plan.</p>
+                  <p>
+                    Conoce nuestras alternativas para recibir tus productos.
+                  </p>
                   <Link to="/blog/planificar-arriendo">Leer artículo</Link>
                 </div>
               </article>
@@ -111,3 +111,4 @@ export default function Blog(props) {
     </>
   );
 }
+

@@ -26,9 +26,6 @@ export default function Footer() {
                 <Link to="/catalogo">Catálogo de productos</Link>
               </li>
               <li>
-                <Link to="/arriendos">Arriendo y servicios</Link>
-              </li>
-              <li>
                 <Link to="/nosotros">Nuestra empresa</Link>
               </li>
               <li>
@@ -42,9 +39,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/blog">Blog</Link>
-              </li>
-              <li>
-                <Link to="/administracion">Administración</Link>
               </li>
             </ul>
           </div>
