@@ -1,15 +1,12 @@
-
 import { Link } from 'react-router-dom'
 
-const dinero = (valor) =>
-  new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    maximumFractionDigits: 0
-  }).format(valor)
+import { dinero } from '../data/operaciones.js'
 
-function ResultadoCompra({ pedido, estado }) {
-  if (!pedido || pedido.estado !== estado) {
+export default function ResultadoCompra({ pedido, estado }) {
+  const estadoPedido = String(pedido?.estado ?? '').toUpperCase()
+  const estadoEsperado = estado ? String(estado).toUpperCase() : estadoPedido
+
+  if (!pedido || !estadoPedido || estadoPedido !== estadoEsperado) {
     return (
       <main className="container py-5">
         <h1>No hay un resultado disponible.</h1>
@@ -18,23 +15,25 @@ function ResultadoCompra({ pedido, estado }) {
     )
   }
 
-  const aprobada = estado === 'Aprobada'
+  const confirmado = estadoPedido === 'CONFIRMADO'
+  const comprador = pedido.comprador ?? {}
+  const items = Array.isArray(pedido.items) ? pedido.items : []
+  const esDespacho = String(pedido.tipoEntrega ?? pedido.entrega ?? '').toUpperCase() === 'DESPACHO'
 
   return (
     <main className="container py-5">
       <div
-        className={`alert ${aprobada ? 'alert-success' : 'alert-danger'}`}
+        className={`alert ${confirmado ? 'alert-success' : 'alert-danger'}`}
         role="status"
       >
         <h1 className="h3">
-          {aprobada
+          {confirmado
             ? '¡Tu pedido fue confirmado!'
             : 'No pudimos procesar tu pedido'}
         </h1>
-
         <p className="mb-0">
-          {aprobada
-            ? 'Tu pedido ha sido registrado correctamente.'
+          {confirmado
+            ? 'El servidor registró tu pedido correctamente.'
             : 'La operación no se completó. Puedes intentarlo nuevamente.'}
         </p>
       </div>
@@ -43,12 +42,21 @@ function ResultadoCompra({ pedido, estado }) {
         <div className="card-body">
           <h2 className="h4">Resumen del pedido</h2>
 
-          <p><strong>Número:</strong> {pedido.id}</p>
-          <p><strong>Cliente:</strong> {pedido.nombre}</p>
-          <p><strong>Correo:</strong> {pedido.correo}</p>
-          <p><strong>Entrega:</strong> {pedido.entrega}</p>
+          <p><strong>Número:</strong> {pedido.pedidoId ?? pedido.id}</p>
+          <p><strong>Estado:</strong> {estadoPedido}</p>
+          <p>
+            <strong>Cliente:</strong>{' '}
+            {comprador.nombre ?? pedido.nombre}{' '}
+            {comprador.apellidos ?? pedido.apellidos ?? ''}
+          </p>
+          <p><strong>RUT:</strong> {comprador.rut ?? pedido.rut}</p>
+          <p><strong>Correo:</strong> {comprador.correo ?? pedido.correo}</p>
+          <p>
+            <strong>Entrega:</strong>{' '}
+            {esDespacho ? 'Despacho a domicilio' : 'Retiro en tienda'}
+          </p>
 
-          {pedido.entrega === 'Despacho a domicilio' && (
+          {esDespacho && (
             <p>
               <strong>Dirección:</strong> {pedido.direccion}, {pedido.comuna}
             </p>
@@ -56,33 +64,48 @@ function ResultadoCompra({ pedido, estado }) {
 
           <hr />
 
-          {pedido.items.map((item) => (
+          {items.map((item) => (
             <div
-              key={item.id}
+              key={item.productoId ?? item.id ?? item.nombre}
               className="d-flex justify-content-between mb-2"
             >
               <span>{item.nombre} × {item.cantidad}</span>
-              <span>{dinero(item.precio * item.cantidad)}</span>
+              <span>
+                {dinero((item.precio ?? item.precioUnitario ?? 0) * item.cantidad)}
+              </span>
             </div>
           ))}
 
           <hr />
 
           <div className="d-flex justify-content-between">
-            <strong>Total</strong>
-            <strong>{dinero(pedido.total)}</strong>
+            <span>Subtotal</span>
+            <strong>{dinero(pedido.subtotal ?? 0)}</strong>
           </div>
+          <div className="d-flex justify-content-between">
+            <span>Entrega</span>
+            <strong>{dinero(pedido.costoDespacho ?? pedido.despacho ?? 0)}</strong>
+          </div>
+
+          <hr />
+
+          <div className="d-flex justify-content-between">
+            <strong>Total confirmado por el servidor</strong>
+            <strong>{dinero(pedido.total ?? 0)}</strong>
+          </div>
+
+          <p className="image-note mt-3 mb-0">
+            Comprobante de demostración. No es una boleta tributaria.
+          </p>
         </div>
       </div>
 
       <Link
-        to={aprobada ? '/catalogo' : '/checkout'}
+        to={confirmado ? '/catalogo' : '/checkout'}
         className="btn btn-primary mt-4"
       >
-        {aprobada ? 'Seguir explorando' : 'Intentar nuevamente'}
+        {confirmado ? 'Seguir explorando' : 'Intentar nuevamente'}
       </Link>
     </main>
   )
 }
-
-export default ResultadoCompra

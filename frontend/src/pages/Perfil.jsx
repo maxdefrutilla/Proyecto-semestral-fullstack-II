@@ -1,64 +1,71 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Campo from "../components/Campo";
-import Encabezado from "../components/Encabezado";
-import ResumenPedido from "../components/ResumenPedido";
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-function DatosPerfil(props) {
-  const [nombre, setNombre] = useState(props.usuario.nombre);
-  const [correo, setCorreo] = useState(props.usuario.correo);
-  const [direccion, setDireccion] = useState(props.usuario.direccion);
-  const [comuna, setComuna] = useState(props.usuario.comuna);
-  const [mensaje, setMensaje] = useState("");
-  function guardar(event) {
-    event.preventDefault();
+import Campo from '../components/Campo.jsx'
+import Encabezado from '../components/Encabezado.jsx'
+import ResumenPedido from '../components/ResumenPedido.jsx'
+import { useAuth } from '../context/useAuth.js'
+import { misPedidos } from '../services/ventasService.js'
+
+function DatosPerfil({ usuario, pedidos, guardar }) {
+  const [nombre, setNombre] = useState(usuario?.nombre ?? '')
+  const [apellidos, setApellidos] = useState(usuario?.apellidos ?? '')
+  const [correo, setCorreo] = useState(usuario?.correo ?? '')
+  const [telefono, setTelefono] = useState(usuario?.telefono ?? '')
+  const [direccion, setDireccion] = useState(usuario?.direccion ?? '')
+  const [comuna, setComuna] = useState(usuario?.comuna ?? '')
+  const [mensaje, setMensaje] = useState('')
+
+  async function guardarCambios(evento) {
+    evento.preventDefault()
+    setMensaje('')
     if (
       nombre.trim().length < 2 ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())
     ) {
-      setMensaje("Ingresa un nombre y correo válidos.");
-      return;
+      setMensaje('Ingresa un nombre y correo válidos.')
+      return
     }
-    props.guardar({
-      ...props.usuario,
-      nombre: nombre.trim(),
-      correo: correo.trim(),
-      direccion: direccion.trim(),
-      comuna: comuna.trim(),
-    });
-    setMensaje("Perfil actualizado en memoria.");
+    try {
+      await guardar({
+        nombre: nombre.trim(),
+        apellidos: apellidos.trim(),
+        correo: correo.trim(),
+        telefono: telefono.trim(),
+        direccion: direccion.trim(),
+        comuna: comuna.trim(),
+      })
+      setMensaje('Perfil actualizado.')
+    } catch (fallo) {
+      setMensaje(fallo?.message ?? 'No fue posible actualizar el perfil.')
+    }
   }
-  const historial = [];
-  for (let i = 0; i < props.pedidos.length; i++) {
-    if (props.pedidos[i].usuarioId === props.usuario.id)
-      historial.push(
-        <ResumenPedido key={props.pedidos[i].id} pedido={props.pedidos[i]} />,
-      );
-  }
+
   return (
     <>
       <Encabezado
         seccion="Mi perfil"
-        titulo={"Hola, " + props.usuario.nombre + "."}
+        titulo={'Hola, ' + (usuario?.nombre ?? '') + '.'}
       />
       <section className="section">
         <div className="container">
           <div className="row g-5">
             <div className="col-lg-5">
-              <form className="form-surface" onSubmit={guardar} noValidate>
+              <form className="form-surface" onSubmit={guardarCambios} noValidate>
                 <h2 className="fs-4">Mis datos</h2>
+                <Campo id="perfilNombre" etiqueta="Nombre" valor={nombre} cambiar={setNombre} />
+                <Campo id="perfilApellidos" etiqueta="Apellidos" valor={apellidos} cambiar={setApellidos} />
+                <div className="mb-3">
+                  <label className="form-label" htmlFor="perfilRut">RUT</label>
+                  <input id="perfilRut" className="form-control" value={usuario?.rut ?? ''} readOnly />
+                </div>
+                <Campo id="perfilCorreo" etiqueta="Correo" tipo="email" valor={correo} cambiar={setCorreo} />
                 <Campo
-                  id="perfilNombre"
-                  etiqueta="Nombre"
-                  valor={nombre}
-                  cambiar={setNombre}
-                />
-                <Campo
-                  id="perfilCorreo"
-                  etiqueta="Correo"
-                  tipo="email"
-                  valor={correo}
-                  cambiar={setCorreo}
+                  id="perfilTelefono"
+                  etiqueta="Teléfono"
+                  requerido={false}
+                  valor={telefono}
+                  cambiar={setTelefono}
                 />
                 <Campo
                   id="perfilDireccion"
@@ -76,30 +83,50 @@ function DatosPerfil(props) {
                 />
                 <button className="btn btn-primary">Guardar cambios</button>
                 {mensaje && (
-                  <p className="alert alert-info mt-3" role="status">
-                    {mensaje}
-                  </p>
+                  <p className="alert alert-info mt-3" role="status">{mensaje}</p>
                 )}
               </form>
             </div>
+
             <div className="col-lg-7">
               <h2 className="fs-4">Historial de compras</h2>
-              {historial.length ? (
-                historial
+              {pedidos.length ? (
+                pedidos.map((pedido) => (
+                  <ResumenPedido key={pedido.id ?? pedido.pedidoId} pedido={pedido} />
+                ))
               ) : (
-                <p className="text-muted">
-                  Todavía no hay pedidos de esta cuenta.
-                </p>
+                <p className="text-muted">Todavía no hay pedidos de esta cuenta.</p>
               )}
             </div>
           </div>
         </div>
       </section>
     </>
-  );
+  )
 }
-export default function Perfil(props) {
-  if (!props.usuario)
+
+export default function Perfil() {
+  const { usuario, token, recargarPerfil, guardarPerfil } = useAuth()
+  const [pedidos, setPedidos] = useState([])
+  const [error, setError] = useState('')
+  const usuarioId = usuario?.id
+
+  useEffect(() => {
+    if (!usuarioId || !token) return
+    let activo = true
+    Promise.all([recargarPerfil(), misPedidos()])
+      .then(([, lista]) => {
+        if (!activo) return
+        setPedidos(lista)
+        setError('')
+      })
+      .catch((fallo) => {
+        if (activo) setError(fallo?.message ?? 'No fue posible cargar tus datos.')
+      })
+    return () => { activo = false }
+  }, [usuarioId, token, recargarPerfil])
+
+  if (!usuario) {
     return (
       <section className="section">
         <div className="container empty-state">
@@ -107,6 +134,22 @@ export default function Perfil(props) {
           <Link to="/acceso">Ingresar</Link>
         </div>
       </section>
-    );
-  return <DatosPerfil {...props} key={props.usuario.id} />;
+    )
+  }
+
+  return (
+    <>
+      {error && (
+        <div className="container mt-3">
+          <p className="alert alert-danger" role="alert">{error}</p>
+        </div>
+      )}
+      <DatosPerfil
+        key={usuario.id}
+        usuario={usuario}
+        pedidos={pedidos}
+        guardar={guardarPerfil}
+      />
+    </>
+  )
 }

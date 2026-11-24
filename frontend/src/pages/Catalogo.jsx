@@ -1,15 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import ListaProductos from '../components/ListaProductos.jsx'
 
-// Estas claves coinciden con producto.categoria en productos.json.
-const filtros = [
-  { id: 'todas', nombre: 'Todas las categorías' },
-  { id: 'ascensores', nombre: 'Ascensores' },
-  { id: 'camiones', nombre: 'Camiones' },
-  { id: 'herramientas', nombre: 'Herramientas' },
-  { id: 'indumentaria', nombre: 'Indumentaria' }
-]
+import ListaProductos from '../components/ListaProductos.jsx'
+import { listarCategorias, listarProductos } from '../services/catalogoService.js'
 
 function normalizar(texto = '') {
   return String(texto)
@@ -19,37 +12,63 @@ function normalizar(texto = '') {
     .trim()
 }
 
-function Catalogo({ productos = [], onAgregar, categorias = [] }) {
+function Catalogo({
+  productos: productosProp,
+  categorias: categoriasProp,
+  onAgregar,
+}) {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [productosLocales, setProductosLocales] = useState([])
+  const [categoriasLocales, setCategoriasLocales] = useState([])
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState('')
   const [categoria, setCategoria] = useState('todas')
   const [busqueda, setBusqueda] = useState('')
 
-  // /categoria/:id utiliza el ID numérico del JSON de categorías.
+  const productos = productosProp ?? productosLocales
+  const categorias = categoriasProp ?? categoriasLocales
+
+  useEffect(() => {
+    if (productosProp && categoriasProp) return
+    let activo = true
+    Promise.resolve().then(() => {
+      setCargando(true)
+      setError('')
+      Promise.all([listarProductos(), listarCategorias()])
+        .then(([listaProductos, listaCategorias]) => {
+          if (!activo) return
+          setProductosLocales(Array.isArray(listaProductos) ? listaProductos : [])
+          setCategoriasLocales(Array.isArray(listaCategorias) ? listaCategorias : [])
+        })
+        .catch((fallo) => {
+          if (activo) setError(fallo?.message ?? 'No fue posible cargar el catálogo.')
+        })
+        .finally(() => {
+          if (activo) setCargando(false)
+        })
+    })
+    return () => { activo = false }
+  }, [productosProp, categoriasProp])
+
+  const filtros = [
+    { id: 'todas', nombre: 'Todas las categorías' },
+    ...categorias.map((item) => ({ id: item.codigo, nombre: item.nombre })),
+  ]
+
   const categoriaSeleccionada = categorias.find(
-    (item) => String(item.id) === id
+    (item) => String(item.id) === String(id) || item.codigo === id
   )
-
-  // Admitimos tanto un slug existente como un nombre de categoría.
-  // Ninguno de los dos se presume obligatorio en el JSON.
-  const categoriaRuta = categoriaSeleccionada
-    ? normalizar(categoriaSeleccionada.slug || categoriaSeleccionada.nombre)
-    : null
-
-  // En /catalogo usamos el filtro local; en /categoria/:id, el de la URL.
-  const categoriaActiva = id ? categoriaRuta : categoria
-  const rutaInvalida = Boolean(id && !categoriaRuta)
+  const categoriaActiva = id ? (categoriaSeleccionada?.codigo ?? null) : categoria
+  const rutaInvalida = Boolean(id && categorias.length > 0 && !categoriaSeleccionada)
 
   const productosFiltrados = rutaInvalida
     ? []
     : productos.filter((producto) => {
         const coincideCategoria =
           categoriaActiva === 'todas' ||
-          normalizar(producto.categoria) === categoriaActiva
-
-        const coincideBusqueda = normalizar(producto.nombre)
-          .includes(normalizar(busqueda))
-
+          normalizar(producto.categoria) === normalizar(categoriaActiva)
+        const coincideBusqueda = normalizar(producto.nombre).includes(normalizar(busqueda))
         return coincideCategoria && coincideBusqueda
       })
 
@@ -84,8 +103,7 @@ function Catalogo({ productos = [], onAgregar, categorias = [] }) {
                   <button
                     key={item.id}
                     type="button"
-                    className={'filter-option ' +
-                      (categoriaActiva === item.id ? 'active' : '')}
+                    className={'filter-option ' + (categoriaActiva === item.id ? 'active' : '')}
                     aria-pressed={categoriaActiva === item.id}
                     onClick={() => seleccionarCategoria(item.id)}
                   >
@@ -96,9 +114,7 @@ function Catalogo({ productos = [], onAgregar, categorias = [] }) {
             </aside>
 
             <div className="col-lg-9">
-              <label className="form-label" htmlFor="busqueda">
-                Buscar producto
-              </label>
+              <label className="form-label" htmlFor="busqueda">Buscar producto</label>
               <input
                 id="busqueda"
                 type="search"
@@ -119,15 +135,15 @@ function Catalogo({ productos = [], onAgregar, categorias = [] }) {
                 </button>
               </div>
 
-              {rutaInvalida ? (
-                <div className="alert alert-warning">
-                  La categoría solicitada no existe.
-                </div>
+              {error && (
+                <div className="alert alert-danger" role="alert">{error}</div>
+              )}
+              {cargando ? (
+                <div className="alert alert-info" role="status">Cargando catálogo…</div>
+              ) : rutaInvalida ? (
+                <div className="alert alert-warning">La categoría solicitada no existe.</div>
               ) : (
-                <ListaProductos
-                  productos={productosFiltrados}
-                  onAgregar={onAgregar}
-                />
+                <ListaProductos productos={productosFiltrados} onAgregar={onAgregar} />
               )}
             </div>
           </div>

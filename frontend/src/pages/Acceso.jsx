@@ -1,99 +1,94 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Campo from "../components/Campo";
-import imagenes from "../data/imagenes";
-import { claveValida, siguienteId } from "../data/operaciones";
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
-export default function Acceso(props) {
-  const [registro, setRegistro] = useState(false);
-  const [nombre, setNombre] = useState("");
-  const [usuario, setUsuario] = useState("");
-  const [correo, setCorreo] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [comuna, setComuna] = useState("");
-  const [clave, setClave] = useState("");
-  const [confirmacion, setConfirmacion] = useState("");
-  const [verClave, setVerClave] = useState(false);
-  const [errores, setErrores] = useState({});
-  const [mensaje, setMensaje] = useState("");
+import Campo from '../components/Campo.jsx'
+import imagenes from '../data/imagenes.js'
+import { claveValida, validarRut } from '../data/operaciones.js'
+import { useAuth } from '../context/useAuth.js'
 
-  function enviar(event) {
-    event.preventDefault();
-    const nuevosErrores = {};
-    const normalizado = usuario.trim().toLowerCase();
-    let valido = true;
-    if (normalizado === "") {
-      nuevosErrores.usuario = "Ingresa tu usuario.";
-      valido = false;
-    }
-    if (clave.trim() === "") {
-      nuevosErrores.clave = "Ingresa tu contraseña.";
-      valido = false;
-    }
-    if (registro) {
+export default function Acceso() {
+  const { usuario, esAdmin, login, registro, logout, cargando } = useAuth()
+  const navigate = useNavigate()
+
+  const [registrando, setRegistrando] = useState(false)
+  const [nombre, setNombre] = useState('')
+  const [apellidos, setApellidos] = useState('')
+  const [usuarioTexto, setUsuarioTexto] = useState('')
+  const [rut, setRut] = useState('')
+  const [correo, setCorreo] = useState('')
+  const [telefono, setTelefono] = useState('')
+  const [clave, setClave] = useState('')
+  const [confirmacion, setConfirmacion] = useState('')
+  const [verClave, setVerClave] = useState(false)
+  const [errores, setErrores] = useState({})
+  const [errorGeneral, setErrorGeneral] = useState('')
+  const [mensaje, setMensaje] = useState('')
+
+  function cambiarModo(nuevoModo) {
+    setRegistrando(nuevoModo)
+    setErrores({})
+    setErrorGeneral('')
+    setMensaje('')
+  }
+
+  async function enviar(evento) {
+    evento.preventDefault()
+    const nuevosErrores = {}
+    const normalizado = usuarioTexto.trim().toLowerCase()
+
+    if (!normalizado) nuevosErrores.usuario = 'Ingresa tu usuario.'
+    if (!clave) nuevosErrores.clave = 'Ingresa tu contraseña.'
+
+    if (registrando) {
       if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]{2,80}$/.test(nombre.trim())) {
-        nuevosErrores.nombre = "Ingresa un nombre válido.";
-        valido = false;
+        nuevosErrores.nombre = 'Ingresa un nombre válido.'
+      }
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]{2,80}$/.test(apellidos.trim())) {
+        nuevosErrores.apellidos = 'Ingresa tus apellidos.'
       }
       if (!/^[a-z0-9._-]{3,30}$/.test(normalizado)) {
-        nuevosErrores.usuario =
-          "Usa entre 3 y 30 letras, números, puntos o guiones.";
-        valido = false;
+        nuevosErrores.usuario = 'Usa entre 3 y 30 letras, números, puntos o guiones.'
       }
+      if (!validarRut(rut)) nuevosErrores.rut = 'Ingresa un RUT válido. Ejemplo: 12345678-5.'
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) {
-        nuevosErrores.correo = "Ingresa un correo válido.";
-        valido = false;
+        nuevosErrores.correo = 'Ingresa un correo válido.'
       }
       if (!claveValida(clave)) {
-        nuevosErrores.clave =
-          "Mínimo 6 caracteres, una letra, un símbolo y una mayúscula.";
-        valido = false;
+        nuevosErrores.clave = 'Mínimo 6 caracteres, una letra, un símbolo y una mayúscula.'
       }
-      if (clave !== confirmacion || confirmacion === "") {
-        nuevosErrores.confirmacion = "Las contraseñas deben coincidir.";
-        valido = false;
-      }
-      for (let i = 0; i < props.usuarios.length; i++) {
-        if (props.usuarios[i].usuario === normalizado) {
-          nuevosErrores.usuario = "Este usuario ya existe.";
-          valido = false;
-        }
+      if (!confirmacion || clave !== confirmacion) {
+        nuevosErrores.confirmacion = 'Las contraseñas deben coincidir.'
       }
     }
-    setErrores(nuevosErrores);
-    setMensaje("");
-    if (!valido) return;
 
-    if (registro) {
-      props.registrar({
-        id: siguienteId(props.usuarios),
-        nombre: nombre.trim(),
-        usuario: normalizado,
-        correo: correo.trim(),
-        clave: clave,
-        rol: "Cliente",
-        direccion: direccion.trim(),
-        comuna: comuna.trim(),
-      });
-      setRegistro(false);
-      setClave("");
-      setConfirmacion("");
-      setMensaje("Cuenta creada. Ya puedes iniciar sesión.");
-    } else {
-      let encontrado = null;
-      for (let i = 0; i < props.usuarios.length; i++) {
-        if (
-          props.usuarios[i].usuario === normalizado &&
-          props.usuarios[i].clave === clave
-        )
-          encontrado = props.usuarios[i];
+    setErrores(nuevosErrores)
+    setMensaje('')
+    setErrorGeneral('')
+    if (Object.keys(nuevosErrores).length > 0) return
+
+    try {
+      if (registrando) {
+        await registro({
+          nombre: nombre.trim(),
+          apellidos: apellidos.trim(),
+          usuario: normalizado,
+          rut: rut.trim(),
+          correo: correo.trim(),
+          telefono: telefono.trim(),
+          clave,
+        })
+        setMensaje('Cuenta creada. Ya puedes iniciar sesión.')
+        setRegistrando(false)
+        setClave('')
+        setConfirmacion('')
+      } else {
+        const resultado = await login({ usuario: normalizado, clave })
+        setClave('')
+        const rol = String(resultado?.usuario?.rol ?? '').toUpperCase()
+        navigate(rol === 'ADMINISTRADOR' ? '/administracion' : '/perfil')
       }
-      if (encontrado === null)
-        setErrores({ clave: "Usuario o contraseña incorrectos." });
-      else {
-        props.ingresar(encontrado);
-        setClave("");
-      }
+    } catch (fallo) {
+      setErrorGeneral(fallo?.message ?? 'No fue posible completar la operación.')
     }
   }
 
@@ -111,25 +106,23 @@ export default function Acceso(props) {
             <p>Accede a tus datos y revisa tus compras.</p>
             <img src={imagenes.obra} alt="Obra en construcción" />
           </div>
+
           <div className="auth-form">
-            {props.usuario ? (
+            {usuario ? (
               <>
-                <span className="eyebrow">{props.usuario.rol}</span>
-                <h2>Hola, {props.usuario.nombre}.</h2>
-                <p>{props.usuario.correo}</p>
+                <span className="eyebrow">{usuario.rol}</span>
+                <h2>Hola, {usuario.nombre}.</h2>
+                <p>{usuario.correo}</p>
                 <div className="d-flex gap-2 flex-wrap">
                   <Link className="btn btn-primary" to="/perfil">
                     Mi perfil e historial
                   </Link>
-                  {props.usuario.rol === "Administrador" && (
+                  {esAdmin && (
                     <Link className="btn btn-outline-primary" to="/administracion">
                       Administración
                     </Link>
                   )}
-                  <button
-                    className="btn btn-outline-secondary"
-                    onClick={props.salir}
-                  >
+                  <button className="btn btn-outline-secondary" type="button" onClick={logout}>
                     Cerrar sesión
                   </button>
                 </div>
@@ -138,61 +131,69 @@ export default function Acceso(props) {
               <>
                 <div className="d-flex gap-2 mb-4">
                   <button
-                    className={
-                      "btn btn-sm " +
-                      (!registro ? "btn-primary" : "btn-outline-primary")
-                    }
-                    onClick={function () {
-                      setRegistro(false);
-                      setErrores({});
-                      setMensaje("");
-                    }}
+                    type="button"
+                    className={'btn btn-sm ' + (!registrando ? 'btn-primary' : 'btn-outline-primary')}
+                    onClick={() => cambiarModo(false)}
                   >
                     Ingresar
                   </button>
                   <button
-                    className={
-                      "btn btn-sm " +
-                      (registro ? "btn-primary" : "btn-outline-primary")
-                    }
-                    onClick={function () {
-                      setRegistro(true);
-                      setErrores({});
-                      setMensaje("");
-                    }}
+                    type="button"
+                    className={'btn btn-sm ' + (registrando ? 'btn-primary' : 'btn-outline-primary')}
+                    onClick={() => cambiarModo(true)}
                   >
                     Registrarse
                   </button>
                 </div>
+
                 <h2>
-                  {registro
-                    ? "Crear cuenta de cliente"
-                    : "Bienvenido de vuelta."}
+                  {registrando ? 'Crear cuenta de cliente' : 'Bienvenido de vuelta.'}
                 </h2>
+
                 {mensaje && (
-                  <p className="alert alert-success" role="status">
-                    {mensaje}
-                  </p>
+                  <p className="alert alert-success" role="status">{mensaje}</p>
                 )}
+                {errorGeneral && (
+                  <p className="alert alert-danger" role="alert">{errorGeneral}</p>
+                )}
+
                 <form onSubmit={enviar} noValidate>
-                  {registro && (
-                    <Campo
-                      id="nombreCuenta"
-                      etiqueta="Nombre completo"
-                      valor={nombre}
-                      cambiar={setNombre}
-                      error={errores.nombre}
-                    />
+                  {registrando && (
+                    <>
+                      <Campo
+                        id="nombreCuenta"
+                        etiqueta="Nombre"
+                        valor={nombre}
+                        cambiar={setNombre}
+                        error={errores.nombre}
+                      />
+                      <Campo
+                        id="apellidosCuenta"
+                        etiqueta="Apellidos"
+                        valor={apellidos}
+                        cambiar={setApellidos}
+                        error={errores.apellidos}
+                      />
+                    </>
                   )}
+
                   <Campo
                     id="usuarioCuenta"
                     etiqueta="Usuario"
-                    valor={usuario}
-                    cambiar={setUsuario}
+                    valor={usuarioTexto}
+                    cambiar={setUsuarioTexto}
                     error={errores.usuario}
                   />
-                  {registro && (
+
+                  {registrando && (
                     <>
+                      <Campo
+                        id="rutCuenta"
+                        etiqueta="RUT"
+                        valor={rut}
+                        cambiar={setRut}
+                        error={errores.rut}
+                      />
                       <Campo
                         id="correoCuenta"
                         etiqueta="Correo"
@@ -202,61 +203,57 @@ export default function Acceso(props) {
                         error={errores.correo}
                       />
                       <Campo
-                        id="direccionCuenta"
-                        etiqueta="Dirección (opcional)"
+                        id="telefonoCuenta"
+                        etiqueta="Teléfono (opcional)"
                         requerido={false}
-                        valor={direccion}
-                        cambiar={setDireccion}
-                      />
-                      <Campo
-                        id="comunaCuenta"
-                        etiqueta="Comuna (opcional)"
-                        requerido={false}
-                        valor={comuna}
-                        cambiar={setComuna}
+                        valor={telefono}
+                        cambiar={setTelefono}
                       />
                     </>
                   )}
+
                   <Campo
                     id="claveCuenta"
                     etiqueta="Contraseña"
-                    tipo={verClave ? "text" : "password"}
+                    tipo={verClave ? 'text' : 'password'}
                     valor={clave}
                     cambiar={setClave}
                     error={errores.clave}
                   />
-                  {registro && (
+
+                  {registrando && (
                     <>
                       <p className="form-text">
-                        6 caracteres mínimo, una letra, un símbolo y una
-                        mayúscula.
+                        6 caracteres mínimo, una letra, un símbolo y una mayúscula.
                       </p>
                       <Campo
                         id="confirmacion"
                         etiqueta="Confirmar contraseña"
-                        tipo={verClave ? "text" : "password"}
+                        tipo={verClave ? 'text' : 'password'}
                         valor={confirmacion}
                         cambiar={setConfirmacion}
                         error={errores.confirmacion}
                       />
                     </>
                   )}
+
                   <div className="form-check mb-3">
                     <input
                       id="verClave"
                       type="checkbox"
                       className="form-check-input"
                       checked={verClave}
-                      onChange={function (e) {
-                        setVerClave(e.target.checked);
-                      }}
+                      onChange={(evento) => setVerClave(evento.target.checked)}
                     />
                     <label htmlFor="verClave" className="form-check-label">
                       Mostrar contraseña
                     </label>
                   </div>
-                  <button className="btn btn-primary w-100" type="submit">
-                    {registro ? "Crear cuenta" : "Iniciar sesión"}
+
+                  <button className="btn btn-primary w-100" type="submit" disabled={cargando}>
+                    {cargando
+                      ? 'Procesando…'
+                      : (registrando ? 'Crear cuenta' : 'Iniciar sesión')}
                   </button>
                 </form>
               </>
@@ -265,5 +262,5 @@ export default function Acceso(props) {
         </div>
       </div>
     </section>
-  );
+  )
 }

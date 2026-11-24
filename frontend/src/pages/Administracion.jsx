@@ -1,16 +1,76 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Encabezado from "../components/Encabezado";
-import AdminProductos from "./AdminProductos";
-import AdminCategorias from "./AdminCategorias";
-import AdminUsuarios from "./AdminUsuarios";
-import ResumenPedido from "../components/ResumenPedido";
-import { dinero } from "../data/operaciones";
+import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+
+import Encabezado from '../components/Encabezado.jsx'
+import AdminProductos from './AdminProductos.jsx'
+import AdminCategorias from './AdminCategorias.jsx'
+import AdminUsuarios from './AdminUsuarios.jsx'
+import ResumenPedido from '../components/ResumenPedido.jsx'
+import { dinero } from '../data/operaciones.js'
+import {
+  actualizarCategoria,
+  actualizarProducto,
+  actualizarUsuarioAdministrativo,
+  crearCategoria,
+  crearProducto,
+  crearUsuarioAdministrativo,
+  desactivarCategoria,
+  desactivarProducto,
+  desactivarUsuario,
+  listarCategorias,
+  listarProductos,
+  listarUsuarios,
+} from '../services/catalogoService.js'
+import { listarPedidos } from '../services/ventasService.js'
+
+function esAdministrador(usuario) {
+  const rol = String(usuario?.rol ?? '').toUpperCase()
+  return rol === 'ADMINISTRADOR' || rol === 'ADMIN'
+}
 
 export default function Administracion(props) {
-  const [vista, setVista] = useState("Resumen");
-  const [pedidoId, setPedidoId] = useState(null);
-  if (!props.usuario || props.usuario.rol !== "Administrador")
+  const [vista, setVista] = useState('Resumen')
+  const [pedidoId, setPedidoId] = useState(null)
+  const [productosLocales, setProductosLocales] = useState([])
+  const [categoriasLocales, setCategoriasLocales] = useState([])
+  const [usuariosLocales, setUsuariosLocales] = useState([])
+  const [pedidosLocales, setPedidosLocales] = useState([])
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState('')
+
+  const autorizado = esAdministrador(props.usuario)
+
+  const recargar = useCallback(async () => {
+    if (!autorizado) return
+    setCargando(true)
+    try {
+      const [productos, categorias, usuarios, pedidos] = await Promise.all([
+        listarProductos({ incluirInactivos: true, auth: true }),
+        listarCategorias({ incluirInactivas: true, auth: true }),
+        listarUsuarios(),
+        listarPedidos(),
+      ])
+      setProductosLocales(Array.isArray(productos) ? productos : [])
+      setCategoriasLocales(Array.isArray(categorias) ? categorias : [])
+      setUsuariosLocales(Array.isArray(usuarios) ? usuarios : [])
+      setPedidosLocales(Array.isArray(pedidos) ? pedidos : [])
+      setError('')
+    } catch (fallo) {
+      setError(fallo?.message ?? 'No fue posible cargar los datos de administración.')
+    } finally {
+      setCargando(false)
+    }
+  }, [autorizado])
+
+  useEffect(() => {
+    let activo = true
+    Promise.resolve().then(() => {
+      if (activo) recargar()
+    })
+    return () => { activo = false }
+  }, [recargar])
+
+  if (!autorizado) {
     return (
       <section className="section">
         <div className="container empty-state">
@@ -23,64 +83,108 @@ export default function Administracion(props) {
           </Link>
         </div>
       </section>
-    );
-  const menu = [];
-  const secciones = [
-    "Resumen",
-    "Productos",
-    "Categorías",
-    "Usuarios",
-    "Pedidos",
-    "Reportes",
-  ];
-  for (let i = 0; i < secciones.length; i++) {
-    const seccion = secciones[i];
-    menu.push(
-      <button
-        key={seccion}
-        className={"filter-option " + (vista === seccion ? "active" : "")}
-        aria-pressed={vista === seccion}
-        onClick={function () {
-          setVista(seccion);
-        }}
-      >
-        {seccion}
-      </button>,
-    );
+    )
   }
-  let ventas = 0;
-  let aprobadas = 0;
-  let criticos = 0;
-  for (let i = 0; i < props.productos.length; i++)
-    if (props.productos[i].stock <= 5) criticos++;
-  const filas = [];
-  let seleccionado = null;
-  for (let i = 0; i < props.pedidos.length; i++) {
-    const pedido = props.pedidos[i];
-    if (pedido.estado === "Aprobada") {
-      ventas += pedido.total;
-      aprobadas++;
+
+  const productos = props.productos ?? productosLocales
+  const categorias = props.categorias ?? categoriasLocales
+  const usuarios = props.usuarios ?? usuariosLocales
+  const pedidos = props.pedidos ?? pedidosLocales
+
+  async function guardarProducto(producto, esNuevo) {
+    const respuesta = esNuevo
+      ? await crearProducto(producto)
+      : await actualizarProducto(producto.id, producto)
+    await recargar()
+    return respuesta
+  }
+
+  async function eliminarProducto(id) {
+    await desactivarProducto(id)
+    await recargar()
+    return 'Producto dado de baja.'
+  }
+
+  async function guardarCategoria(categoria, esNueva) {
+    const respuesta = esNueva
+      ? await crearCategoria(categoria)
+      : await actualizarCategoria(categoria.id, categoria)
+    await recargar()
+    return respuesta
+  }
+
+  async function eliminarCategoria(id) {
+    await desactivarCategoria(id)
+    await recargar()
+    return 'Categoría eliminada.'
+  }
+
+  async function guardarUsuario(cuenta, esNuevo) {
+    const respuesta = esNuevo
+      ? await crearUsuarioAdministrativo(cuenta)
+      : await actualizarUsuarioAdministrativo(cuenta.id, cuenta)
+    await recargar()
+    return respuesta
+  }
+
+  async function eliminarUsuario(id) {
+    await desactivarUsuario(id)
+    await recargar()
+    return 'Usuario eliminado.'
+  }
+
+  const secciones = [
+    'Resumen',
+    'Productos',
+    'Categorías',
+    'Usuarios',
+    'Pedidos',
+    'Reportes',
+  ]
+  const menu = secciones.map((seccion) => (
+    <button
+      key={seccion}
+      type="button"
+      className={'filter-option ' + (vista === seccion ? 'active' : '')}
+      aria-pressed={vista === seccion}
+      onClick={() => setVista(seccion)}
+    >
+      {seccion}
+    </button>
+  ))
+
+  let ventas = 0
+  let confirmados = 0
+  const criticos = productos.filter((producto) => producto.stock <= 5).length
+
+  const filas = []
+  let seleccionado = null
+  pedidos.forEach((pedido) => {
+    const id = pedido.pedidoId ?? pedido.id
+    if (pedido.estado === 'CONFIRMADO') {
+      ventas += Number(pedido.total ?? 0)
+      confirmados++
     }
-    if (pedido.id === pedidoId) seleccionado = pedido;
+    if (String(id) === String(pedidoId)) seleccionado = pedido
     filas.push(
-      <tr key={pedido.id}>
-        <td>#{pedido.id}</td>
-        <td>{pedido.nombre}</td>
+      <tr key={id}>
+        <td>#{id}</td>
+        <td>{pedido.comprador?.nombre ?? pedido.nombre}</td>
         <td>{pedido.estado}</td>
         <td>{dinero(pedido.total)}</td>
         <td>
           <button
+            type="button"
             className="btn btn-sm btn-outline-primary"
-            onClick={function () {
-              setPedidoId(pedido.id);
-            }}
+            onClick={() => setPedidoId(id)}
           >
             Ver comprobante
           </button>
         </td>
-      </tr>,
-    );
-  }
+      </tr>
+    )
+  })
+
   return (
     <>
       <Encabezado
@@ -90,6 +194,15 @@ export default function Administracion(props) {
       />
       <section className="section">
         <div className="container">
+          {cargando && (
+            <p className="alert alert-info" role="status">
+              Cargando datos de administración…
+            </p>
+          )}
+          {error && (
+            <p className="alert alert-danger" role="alert">{error}</p>
+          )}
+
           <div className="row g-4">
             <aside className="col-lg-3">
               <div className="filter-panel">
@@ -99,33 +212,32 @@ export default function Administracion(props) {
                 <Link to="/perfil">Mi perfil</Link>
               </div>
             </aside>
+
             <div className="col-lg-9">
-              {(vista === "Resumen" || vista === "Reportes") && (
+              {(vista === 'Resumen' || vista === 'Reportes') && (
                 <>
                   <h2>
-                    {vista === "Resumen"
-                      ? "Resumen de la tienda"
-                      : "Reporte de la tienda"}
+                    {vista === 'Resumen'
+                      ? 'Resumen de la tienda'
+                      : 'Reporte de la tienda'}
                   </h2>
                   <div className="row g-3 my-3">
                     <div className="col-sm-6">
                       <div className="value-card">
                         <p>Productos</p>
-                        <strong className="fs-2">
-                          {props.productos.length}
-                        </strong>
+                        <strong className="fs-2">{productos.length}</strong>
                       </div>
                     </div>
                     <div className="col-sm-6">
                       <div className="value-card">
-                        <p>Ventas aprobadas</p>
+                        <p>Ventas confirmadas</p>
                         <strong className="fs-2">{dinero(ventas)}</strong>
                       </div>
                     </div>
                     <div className="col-sm-6">
                       <div className="value-card">
-                        <p>Pedidos aprobados</p>
-                        <strong className="fs-2">{aprobadas}</strong>
+                        <p>Pedidos confirmados</p>
+                        <strong className="fs-2">{confirmados}</strong>
                       </div>
                     </div>
                     <div className="col-sm-6">
@@ -136,37 +248,40 @@ export default function Administracion(props) {
                     </div>
                   </div>
                   <p>
-                    {props.usuarios.length} usuarios · {props.categorias.length}{" "}
-                    categorías · {props.pedidos.length - aprobadas} intentos
-                    rechazados
+                    {usuarios.length} usuarios · {categorias.length} categorías ·{' '}
+                    {pedidos.length - confirmados} intentos rechazados
                   </p>
                 </>
               )}
-              {vista === "Productos" && (
+
+              {vista === 'Productos' && (
                 <AdminProductos
-                  productos={props.productos}
-                  categorias={props.categorias}
-                  guardar={props.guardarProducto}
-                  eliminar={props.eliminarProducto}
+                  productos={productos}
+                  categorias={categorias}
+                  guardar={guardarProducto}
+                  eliminar={eliminarProducto}
                 />
               )}
-              {vista === "Categorías" && (
+
+              {vista === 'Categorías' && (
                 <AdminCategorias
-                  categorias={props.categorias}
-                  guardar={props.guardarCategoria}
-                  eliminar={props.eliminarCategoria}
+                  categorias={categorias}
+                  guardar={guardarCategoria}
+                  eliminar={eliminarCategoria}
                 />
               )}
-              {vista === "Usuarios" && (
+
+              {vista === 'Usuarios' && (
                 <AdminUsuarios
-                  usuarios={props.usuarios}
+                  usuarios={usuarios}
                   usuario={props.usuario}
-                  pedidos={props.pedidos}
-                  guardar={props.guardarUsuario}
-                  eliminar={props.eliminarUsuario}
+                  pedidos={pedidos}
+                  guardar={guardarUsuario}
+                  eliminar={eliminarUsuario}
                 />
               )}
-              {vista === "Pedidos" && (
+
+              {vista === 'Pedidos' && (
                 <>
                   <h2>Pedidos y comprobantes</h2>
                   <div className="table-responsive">
@@ -194,5 +309,5 @@ export default function Administracion(props) {
         </div>
       </section>
     </>
-  );
+  )
 }

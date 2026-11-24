@@ -13,7 +13,8 @@ function Inicio({ productos, onAgregar }) {
     'ascensores',
     'camiones',
     'herramientas',
-    'indumentaria'
+    'indumentaria',
+    'andamios'
   ]
 
   const destacados = categorias
