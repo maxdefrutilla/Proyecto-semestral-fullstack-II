@@ -1,0 +1,154 @@
+[
+  {
+    "id": 1,
+    "nombre": "Ascensor de obra 2T",
+    "categoria": "ascensores",
+    "tonelaje": "2 toneladas",
+    "tamano": "3,2 × 1,5 × 2,5 m",
+    "precio": 6500000,
+    "imagen": "ascensores.jpg",
+    "etiqueta": "Elevación de carga",
+    "descripcion": "Ascensor de obra para el traslado vertical de materiales en proyectos de construcción. Su cabina facilita la carga de herramientas e insumos entre distintos niveles.",
+    "detalles": [
+      "Altura de elevación referencial: 100 m",
+      "Cabina con acceso frontal",
+      "Instalación y condiciones de uso por confirmar"
+    ],
+    "stock": 10,
+    "oferta": false,
+    "precioAnterior": 0
+  },
+  {
+    "id": 2,
+    "nombre": "Ascensor industrial 1T",
+    "categoria": "ascensores",
+    "tonelaje": "1 tonelada",
+    "tamano": "2,0 × 1,5 × 2,2 m",
+    "precio": 4900000,
+    "imagen": "ascensores.jpg",
+    "etiqueta": "Espacios industriales",
+    "descripcion": "Equipo de elevación pensado para mover materiales entre niveles de bodegas y espacios industriales. Una alternativa para proyectos con menor capacidad de carga.",
+    "detalles": [
+      "Altura de elevación referencial: 30 m",
+      "Uso para traslado de materiales",
+      "Requiere evaluación del lugar de instalación"
+    ],
+    "stock": 12,
+    "oferta": false,
+    "precioAnterior": 0
+  },
+  {
+    "id": 3,
+    "nombre": "Camión tolva 20T",
+    "categoria": "camiones",
+    "tonelaje": "20 toneladas",
+    "tamano": "8,5 × 2,5 × 3,4 m",
+    "precio": 48900000,
+    "imagen": "camiones.jpg",
+    "etiqueta": "Movimiento de tierra",
+    "descripcion": "Camión para transportar áridos, tierra y materiales a granel. Pensado para apoyar el abastecimiento y retiro de material en faenas de construcción.",
+    "detalles": [
+      "Tolva de descarga trasera",
+      "Motorización diésel",
+      "Capacidad y disponibilidad referenciales"
+    ],
+    "stock": 14,
+    "oferta": false,
+    "precioAnterior": 0
+  },
+  {
+    "id": 4,
+    "nombre": "Camión tolva 12T",
+    "categoria": "camiones",
+    "tonelaje": "12 toneladas",
+    "tamano": "7,1 × 2,5 × 3,1 m",
+    "precio": 34900000,
+    "imagen": "camiones.jpg",
+    "etiqueta": "Transporte de material",
+    "descripcion": "Camión tolva de capacidad intermedia para el transporte de materiales en obras. Su configuración está orientada a trabajos de carga y descarga frecuentes.",
+    "detalles": [
+      "Descarga mediante sistema hidráulico",
+      "Cabina para conductor y acompañante",
+      "Equipamiento sujeto a revisión"
+    ],
+    "stock": 16,
+    "oferta": false,
+    "precioAnterior": 0
+  },
+  {
+    "id": 5,
+    "nombre": "Taladro inalámbrico 18V",
+    "categoria": "herramientas",
+    "tonelaje": "No aplica",
+    "tamano": "22 × 8 × 24 cm",
+    "precio": 89990,
+    "imagen": "herramientas.jpg",
+    "etiqueta": "Perforación y montaje",
+    "descripcion": "Taladro inalámbrico para tareas de perforación y atornillado. Una herramienta práctica para trabajos de montaje y mantenimiento donde se necesita movilidad.",
+    "detalles": [
+      "Alimentación con batería de 18 V",
+      "Velocidad variable",
+      "Accesorios referenciales: batería y cargador"
+    ],
+    "stock": 18,
+    "oferta": true,
+    "precioAnterior": 99990
+  },
+  {
+    "id": 6,
+    "nombre": "Taladro percutor 20V",
+    "categoria": "herramientas",
+    "tonelaje": "No aplica",
+    "tamano": "24 × 8 × 25 cm",
+    "precio": 129990,
+    "imagen": "herramientas.jpg",
+    "etiqueta": "Trabajo en obra",
+    "descripcion": "Taladro con función percutora para trabajos de instalación en obra. Permite alternar entre perforación y atornillado según el material y la tarea.",
+    "detalles": [
+      "Función de percusión",
+      "Selector de torque",
+      "Revisar compatibilidad de brocas antes de usar"
+    ],
+    "stock": 20,
+    "oferta": false,
+    "precioAnterior": 0
+  },
+  {
+    "id": 7,
+    "nombre": "Casco de seguridad amarillo",
+    "categoria": "indumentaria",
+    "tonelaje": "No aplica",
+    "tamano": "Ajustable: 53–63 cm",
+    "precio": 12990,
+    "imagen": "indumentaria.jpg",
+    "etiqueta": "Protección personal",
+    "descripcion": "Casco para equipar al personal que ingresa a la obra. Cuenta con ajuste de contorno para adaptar su sujeción al usuario.",
+    "detalles": [
+      "Color amarillo",
+      "Suspensión interior ajustable",
+      "Verificar certificación real antes de su compra"
+    ],
+    "stock": 22,
+    "oferta": true,
+    "precioAnterior": 15990
+  },
+  {
+    "id": 8,
+    "nombre": "Casco de supervisor",
+    "categoria": "indumentaria",
+    "tonelaje": "No aplica",
+    "tamano": "Ajustable: 54–62 cm",
+    "precio": 18990,
+    "imagen": "indumentaria.jpg",
+    "etiqueta": "Equipamiento de faena",
+    "descripcion": "Casco ajustable para las tareas de supervisión y recorridos en terreno. Complementa el equipamiento de protección personal de la faena.",
+    "detalles": [
+      "Ajuste mediante rueda posterior",
+      "Banda interior reemplazable",
+      "Fotografía y especificaciones referenciales"
+    ],
+    "stock": 24,
+    "oferta": false,
+    "precioAnterior": 0
+  }
+]

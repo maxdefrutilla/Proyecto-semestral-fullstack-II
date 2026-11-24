@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "codigo": "ascensores",
+    "nombre": "Ascensores"
+  },
+  {
+    "id": 2,
+    "codigo": "camiones",
+    "nombre": "Camiones"
+  },
+  {
+    "id": 3,
+    "codigo": "herramientas",
+    "nombre": "Herramientas"
+  },
+  {
+    "id": 4,
+    "codigo": "indumentaria",
+    "nombre": "Indumentaria"
+  }
+]
