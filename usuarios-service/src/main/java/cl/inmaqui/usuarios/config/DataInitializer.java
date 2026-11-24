@@ -1,0 +1,58 @@
+package cl.inmaqui.usuarios.config;
+
+import cl.inmaqui.usuarios.entity.Rol;
+import cl.inmaqui.usuarios.entity.Usuario;
+import cl.inmaqui.usuarios.repository.UsuarioRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DataInitializer implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.admin.init-username}")
+    private String adminUsername;
+
+    @Value("${app.admin.init-password}")
+    private String adminPassword;
+
+    @Value("${app.admin.init-correo}")
+    private String adminCorreo;
+
+    @Value("${app.admin.init-rut}")
+    private String adminRut;
+
+    public DataInitializer(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public void run(String... args) {
+        if (!usuarioRepository.existsByUsuario(adminUsername)) {
+            Usuario admin = new Usuario();
+            admin.setUsuario(adminUsername);
+            admin.setNombre("Administrador");
+            admin.setApellidos("INMAQUI");
+            admin.setRut(adminRut);
+            admin.setCorreo(adminCorreo);
+            admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+            admin.setRol(Rol.ADMINISTRADOR);
+            admin.setActivo(true);
+
+            usuarioRepository.save(admin);
+            log.info("Administrador inicial creado exitosamente: {}", adminUsername);
+        } else {
+            log.info("Administrador inicial ya existe: {}", adminUsername);
+        }
+    }
+    
+}

@@ -1,0 +1,30 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ventas-service
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_VENTAS_NAME:inmaqui_ventas}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USUARIO:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  jwt:
+    public-key-path: classpath:certs/app.pub
+  internal-token: ${INTERNAL_SERVICE_TOKEN:inmaqui-secret-internal-token-2026}
+  catalogo-service-url: ${CATALOGO_SERVICE_URL:http://127.0.0.1:8082}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
