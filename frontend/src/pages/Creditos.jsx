@@ -18,7 +18,7 @@ export default function Creditos() {
           </nav>
           <span className="eyebrow">Créditos</span>
           <h1>Fotografías y recursos.</h1>
-          <p>Imágenes referenciales utilizadas en este proyecto académico.</p>
+          <p>Créditos de las imágenes utilizadas en INMAQUI.</p>
         </div>
       </section>
       <section className="section">

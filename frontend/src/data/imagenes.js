@@ -4,5 +4,5 @@ import camiones from "../assets/img/camiones.jpg";
 import herramientas from "../assets/img/herramientas.jpg";
 import indumentaria from "../assets/img/indumentaria.jpg";
 
-const imagenes = { obra, ascensores, camiones, herramientas, indumentaria };
+const imagenes = { obra, andamios: obra, ascensores, camiones, herramientas, indumentaria };
 export default imagenes;

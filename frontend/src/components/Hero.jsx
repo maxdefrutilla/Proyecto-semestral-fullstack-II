@@ -31,10 +31,10 @@ function Hero() {
   }, [])
   return (
     <section
-        ref={carruselRef}
-        id="portada"
-        className="hero carousel slide carousel-fade"
-        aria-label="Destacados de INMAQUI"
+      ref={carruselRef}
+      id="portada"
+      className="hero carousel slide carousel-fade"
+      aria-label="Destacados de INMAQUI"
     >
       <div className="carousel-inner">
 
@@ -70,8 +70,8 @@ function Hero() {
                   Explorar catálogo →
                 </Link>
 
-                <Link className="btn btn-outline-light" to="/arriendos">
-                  Quiero arrendar
+                <Link className="btn btn-outline-light" to="/ofertas">
+                  Ver ofertas
                 </Link>
               </div>
             </div>
@@ -92,22 +92,22 @@ function Hero() {
           <div className="container">
             <div className="hero-copy">
               <span className="eyebrow">
-                Arriendo y servicios
+                Maquinaria para tus proyectos
               </span>
 
               <h1>
-                El equipo justo.
+                Equipa tu obra.
                 <br />
-                El tiempo <em>necesario.</em>
+                Invierte en <em>calidad.</em>
               </h1>
 
               <p>
-                Arriendos por hora, día o mes.
-                Conoce las alternativas para tu próxima obra.
+                Descubre nuestra selección de maquinaria y equipos
+                para construcción. Compra lo que necesitas para tu proyecto.
               </p>
 
-              <Link className="btn btn-accent" to="/arriendos">
-                Ver planes de arriendo →
+              <Link className="btn btn-accent" to="/catalogo">
+                Comprar maquinaria →
               </Link>
             </div>
           </div>
@@ -152,7 +152,7 @@ function Hero() {
             type="button"
             data-bs-target="#portada"
             data-bs-slide-to="1"
-            aria-label="Ver arriendos"
+            aria-label="Ver maquinaria"
           ></button>
         </div>
       </div>

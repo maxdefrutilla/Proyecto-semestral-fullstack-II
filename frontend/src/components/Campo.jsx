@@ -10,6 +10,7 @@ export default function Campo(props) {
         className={"form-control" + (props.error ? " is-invalid" : "")}
         type={props.tipo || "text"}
         value={props.valor}
+        readOnly={props.soloLectura}
         required={props.requerido !== false}
         min={props.min}
         step={props.step}

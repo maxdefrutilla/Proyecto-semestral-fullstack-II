@@ -1,43 +1,30 @@
-
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import ascensores from '../assets/img/ascensores.jpg'
-import camiones from '../assets/img/camiones.jpg'
-import herramientas from '../assets/img/herramientas.jpg'
-import indumentaria from '../assets/img/indumentaria.jpg'
+import imagenes from '../data/imagenes.js'
+import { dinero } from '../data/operaciones.js'
 
-const imagenes = {
-  'ascensores.jpg': ascensores,
-  'camiones.jpg': camiones,
-  'herramientas.jpg': herramientas,
-  'indumentaria.jpg': indumentaria
-}
-
-function dinero(valor) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    maximumFractionDigits: 0
-  }).format(valor)
-}
-
-function Carrito({
+export default function Carrito({
   carrito,
   productos,
   onCambiarCantidad,
   onEliminar,
-  onVaciar
+  onVaciar,
 }) {
   const [confirmarVaciado, setConfirmarVaciado] = useState(false)
 
   const items = carrito.flatMap((item) => {
-    const producto = productos.find((p) => p.id === item.id)
-
-    return producto
-      ? [{ ...producto, cantidad: item.cantidad }]
-      : []
+    const producto = productos.find(
+      (registro) => String(registro.id) === String(item.productoId)
+    )
+    return producto ? [{ ...producto, cantidad: item.cantidad }] : []
   })
+
+  const faltantes = carrito.length - items.length
+  const itemsInvalidos = items.filter(
+    (item) => item.activo === false || item.cantidad > item.stock
+  )
+  const hayProblemas = faltantes > 0 || itemsInvalidos.length > 0
 
   const total = items.reduce(
     (suma, item) => suma + item.precio * item.cantidad,
@@ -64,22 +51,31 @@ function Carrito({
     <main className="container py-5">
       <h1>Tu carrito de compras</h1>
       <p>Revisa los productos y cantidades seleccionadas.</p>
+      <p className="small text-muted">
+        Precios, stock y disponibilidad se obtienen desde el servidor.
+      </p>
+
+      {faltantes > 0 && (
+        <p className="alert alert-warning" role="status">
+          {faltantes} producto(s) ya no están disponibles en el catálogo.
+        </p>
+      )}
+      {itemsInvalidos.length > 0 && (
+        <p className="alert alert-warning" role="status">
+          Algunos productos cambiaron de precio o no tienen stock suficiente.
+          Revisa las cantidades antes de continuar.
+        </p>
+      )}
 
       <div className="row g-4 mt-2">
-
-        {/* PRODUCTOS DEL CARRITO */}
         <div className="col-lg-8">
           {items.map((producto) => (
-            <article
-              className="card mb-3"
-              key={producto.id}
-            >
+            <article className="card mb-3" key={producto.id}>
               <div className="card-body">
                 <div className="row g-3 align-items-center">
-
                   <div className="col-md-3">
                     <img
-                      src={imagenes[producto.imagen] || ascensores}
+                      src={imagenes[String(producto.imagen ?? '').replace(/\.jpg$/i, '')] || imagenes.obra}
                       alt={producto.nombre}
                       className="img-fluid rounded"
                     />
@@ -100,24 +96,25 @@ function Carrito({
                       Stock disponible: {producto.stock}
                     </p>
 
+                    {producto.activo === false && (
+                      <p className="small text-danger mb-2">
+                        Producto dado de baja.
+                      </p>
+                    )}
+
                     <div className="d-flex align-items-center gap-2 flex-wrap">
                       <button
                         type="button"
                         className="btn btn-outline-secondary"
                         disabled={producto.cantidad <= 1}
                         onClick={() =>
-                          onCambiarCantidad(
-                            producto.id,
-                            producto.cantidad - 1
-                          )
+                          onCambiarCantidad(producto.id, producto.cantidad - 1)
                         }
                       >
                         −
                       </button>
 
-                      <span className="fw-bold px-2">
-                        {producto.cantidad}
-                      </span>
+                      <span className="fw-bold px-2">{producto.cantidad}</span>
 
                       <button
                         type="button"
@@ -127,10 +124,7 @@ function Carrito({
                           producto.cantidad >= 99
                         }
                         onClick={() =>
-                          onCambiarCantidad(
-                            producto.id,
-                            producto.cantidad + 1
-                          )
+                          onCambiarCantidad(producto.id, producto.cantidad + 1)
                         }
                       >
                         +
@@ -146,12 +140,9 @@ function Carrito({
                     </div>
 
                     <p className="fw-bold mt-3 mb-0">
-                      Subtotal: {dinero(
-                        producto.precio * producto.cantidad
-                      )}
+                      Subtotal: {dinero(producto.precio * producto.cantidad)}
                     </p>
                   </div>
-
                 </div>
               </div>
             </article>
@@ -168,7 +159,6 @@ function Carrito({
           ) : (
             <div className="alert alert-warning">
               <p>¿Quieres eliminar todos los productos?</p>
-
               <button
                 type="button"
                 className="btn btn-danger me-2"
@@ -176,7 +166,6 @@ function Carrito({
               >
                 Sí, vaciar
               </button>
-
               <button
                 type="button"
                 className="btn btn-outline-secondary"
@@ -188,7 +177,6 @@ function Carrito({
           )}
         </div>
 
-        {/* RESUMEN DEL CARRITO */}
         <aside className="col-lg-4">
           <div className="card">
             <div className="card-body">
@@ -200,20 +188,26 @@ function Carrito({
               </p>
 
               <p>IVA incluido</p>
+              <p className="small text-muted">
+                El despacho se calcula en el checkout según la comuna.
+              </p>
 
               <hr />
 
               <p className="d-flex justify-content-between fs-5">
-                <strong>Total</strong>
+                <strong>Subtotal</strong>
                 <strong>{dinero(total)}</strong>
               </p>
 
-              <Link
-                to="/checkout"
-                className="btn btn-primary w-100"
-              >
-                Continuar con la compra
-              </Link>
+              {hayProblemas ? (
+                <button type="button" className="btn btn-primary w-100" disabled>
+                  Continuar con la compra
+                </button>
+              ) : (
+                <Link to="/checkout" className="btn btn-primary w-100">
+                  Continuar con la compra
+                </Link>
+              )}
             </div>
           </div>
         </aside>
@@ -225,5 +219,3 @@ function Carrito({
     </main>
   )
 }
-
-export default Carrito

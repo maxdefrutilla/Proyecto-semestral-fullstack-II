@@ -1,0 +1,38 @@
+server:
+  port: ${USUARIOS_PORT:8081}
+
+spring:
+  application:
+    name: usuarios-service
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_USUARIOS_NAME:inmaqui_usuarios}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USUARIO}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  cors-origins: ${CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+  jwt:
+    issuer: inmaqui-usuarios
+    expiration-minutes: 15
+    cookie-secure: ${JWT_COOKIE_SECURE:true}
+    private-key-path: ${JWT_PRIVATE_KEY_PATH}
+    public-key-path: ${JWT_PUBLIC_KEY_PATH}
+  admin:
+    init-username: ${ADMIN_INIT_USERNAME:}
+    init-password: ${ADMIN_INIT_PASSWORD:}
+    init-correo: ${ADMIN_INIT_CORREO:}
+    init-rut: ${ADMIN_INIT_RUT:}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

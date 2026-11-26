@@ -1,0 +1,30 @@
+server:
+  port: ${CATALOGO_PORT:8082}
+
+spring:
+  application:
+    name: catalogo-service
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_CATALOGO_NAME:inmaqui_catalogo}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USUARIO}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  cors-origins: ${CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+  jwt:
+    public-key-path: ${JWT_PUBLIC_KEY_PATH}
+  internal-token: ${INTERNAL_SERVICE_TOKEN}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

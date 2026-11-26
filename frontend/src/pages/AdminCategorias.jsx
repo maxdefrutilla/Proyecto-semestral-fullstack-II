@@ -1,127 +1,242 @@
-import { useState } from "react";
-import Campo from "../components/Campo";
-import { siguienteId } from "../data/operaciones";
+import { useState } from 'react'
+
+import Campo from '../components/Campo.jsx'
+import EditorDescripcion from '../components/EditorDescripcion.jsx'
+import { sanitizarHtml } from '../utils/html.js'
+
+function slug(texto) {
+  return String(texto ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
 
 export default function AdminCategorias(props) {
-  const [id, setId] = useState(null);
-  const [nombre, setNombre] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [eliminar, setEliminar] = useState(null);
-  function guardar(event) {
-    event.preventDefault();
+  const categorias = Array.isArray(props.categorias) ? props.categorias : []
+
+  const [id, setId] = useState(null)
+  const [nombre, setNombre] = useState('')
+  const [codigo, setCodigo] = useState('')
+  const [descripcionHtml, setDescripcionHtml] = useState('')
+  const [tipoAtributosTexto, setTipoAtributosTexto] = useState('ASCENSOR')
+  const [mensaje, setMensaje] = useState('')
+  const [eliminar, setEliminar] = useState(null)
+  const [guardando, setGuardando] = useState(false)
+
+  function limpiar() {
+    setId(null)
+    setNombre('')
+    setCodigo('')
+    setDescripcionHtml('')
+    setTipoAtributosTexto('ASCENSOR')
+  }
+
+  function cargar(categoria) {
+    setId(categoria.id)
+    setNombre(categoria.nombre ?? '')
+    setCodigo(categoria.codigo ?? '')
+    setDescripcionHtml(categoria.descripcionHtml ?? '')
+    setTipoAtributosTexto(categoria.tipoAtributos ?? 'ASCENSOR')
+    setMensaje('')
+  }
+
+  async function guardar(evento) {
+    evento.preventDefault()
+    setMensaje('')
+
     if (nombre.trim().length < 2) {
-      setMensaje("Escribe un nombre de al menos 2 caracteres.");
-      return;
+      setMensaje('Escribe un nombre de al menos 2 caracteres.')
+      return
     }
-    let codigo = "";
-    for (let i = 0; i < props.categorias.length; i++) {
+
+    const codigoNormalizado = slug(codigo || nombre)
+    if (!codigoNormalizado) {
+      setMensaje('El código de la categoría no es válido.')
+      return
+    }
+
+    const conflicto = categorias.find(
+      (categoria) =>
+        String(categoria.id) !== String(id) &&
+        (String(categoria.codigo) === codigoNormalizado ||
+          String(categoria.nombre).toLowerCase() === nombre.trim().toLowerCase())
+    )
+    if (conflicto) {
+      setMensaje('Ya existe una categoría con ese nombre o código.')
+      return
+    }
+
+    const categoria = {
+      id,
+      nombre: nombre.trim(),
+      codigo: codigoNormalizado,
+      descripcionHtml: sanitizarHtml(descripcionHtml),
+      tipoAtributos: tipoAtributosTexto,
+    }
+
+    setGuardando(true)
+    try {
+      await props.guardar(categoria, id === null)
+      limpiar()
+      setMensaje('Categoría guardada.')
+    } catch (fallo) {
+      setMensaje(fallo?.message ?? 'No fue posible guardar la categoría.')
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  async function borrar() {
+    try {
+      const respuesta = await props.eliminar(eliminar)
+      setMensaje(respuesta || 'Categoría eliminada.')
       if (
-        props.categorias[i].id !== id &&
-        props.categorias[i].nombre.toLowerCase() === nombre.trim().toLowerCase()
+        String(respuesta || '').includes('eliminada') &&
+        String(id) === String(eliminar)
       ) {
-        setMensaje("Ya existe una categoría con ese nombre.");
-        return;
+        limpiar()
       }
-      if (props.categorias[i].id === id) codigo = props.categorias[i].codigo;
+    } catch (fallo) {
+      setMensaje(fallo?.message ?? 'No fue posible dar de baja la categoría.')
+    } finally {
+      setEliminar(null)
     }
-    const numero = id === null ? siguienteId(props.categorias) : id;
-    if (codigo === "") codigo = "categoria-" + numero;
-    props.guardar({ id: numero, nombre: nombre.trim(), codigo }, id === null);
-    setNombre("");
-    setId(null);
-    setMensaje("Categoría guardada.");
   }
-  function borrar() {
-    const respuesta = props.eliminar(eliminar);
-    setMensaje(respuesta);
-    if (respuesta === "Categoría eliminada." && id === eliminar) {
-      setId(null);
-      setNombre("");
-    }
-    setEliminar(null);
-  }
-  const filas = [];
-  for (let i = 0; i < props.categorias.length; i++) {
-    const categoria = props.categorias[i];
-    filas.push(
-      <tr key={categoria.id}>
-        <td>{categoria.nombre}</td>
-        <td>
-          <button
-            className="btn btn-outline-primary btn-sm me-2"
-            onClick={function () {
-              setId(categoria.id);
-              setNombre(categoria.nombre);
-            }}
-          >
-            Editar
-          </button>
-          <button
-            className="btn btn-outline-danger btn-sm"
-            onClick={function () {
-              setEliminar(categoria.id);
-            }}
-          >
-            Eliminar
-          </button>
-        </td>
-      </tr>,
-    );
-  }
+
+  const filas = categorias.map((categoria) => (
+    <tr key={categoria.id}>
+      <td>
+        {categoria.nombre}
+        {categoria.activo === false && (
+          <span className="badge bg-secondary ms-2">Inactiva</span>
+        )}
+        <br />
+        <small className="text-muted">{categoria.codigo}</small>
+      </td>
+      <td>
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm me-2"
+          onClick={() => cargar(categoria)}
+        >
+          Editar
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline-danger btn-sm"
+          disabled={categoria.activo === false}
+          onClick={() => setEliminar(categoria.id)}
+        >
+          Dar de baja
+        </button>
+      </td>
+    </tr>
+  ))
+
   return (
     <>
       <h2>Categorías</h2>
-      <p>Una categoría con productos no se puede eliminar.</p>
+      <p className="text-muted">
+        La baja es lógica: los productos y el historial de pedidos se conservan.
+      </p>
+
       {mensaje && (
-        <p className="alert alert-info" role="status">
-          {mensaje}
-        </p>
+        <p className="alert alert-info" role="status">{mensaje}</p>
       )}
+
       {eliminar !== null && (
         <div className="alert alert-warning">
-          <p>¿Eliminar la categoría?</p>
-          <button className="btn btn-danger btn-sm me-2" onClick={borrar}>
+          <p>¿Dar de baja la categoría?</p>
+          <button
+            type="button"
+            className="btn btn-danger btn-sm me-2"
+            onClick={borrar}
+          >
             Confirmar
           </button>
           <button
+            type="button"
             className="btn btn-outline-secondary btn-sm"
-            onClick={function () {
-              setEliminar(null);
-            }}
+            onClick={() => setEliminar(null)}
           >
             Cancelar
           </button>
         </div>
       )}
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>{filas}</tbody>
-      </table>
+
+      <div className="table-responsive">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>{filas}</tbody>
+        </table>
+      </div>
+
       <form className="form-surface" onSubmit={guardar} noValidate>
-        <h3>{id === null ? "Nueva categoría" : "Editar categoría"}</h3>
+        <h3>{id === null ? 'Nueva categoría' : 'Editar categoría'}</h3>
+
         <Campo
           id="categoriaNombre"
           etiqueta="Nombre"
           valor={nombre}
           cambiar={setNombre}
         />
-        <button className="btn btn-primary me-2">Guardar categoría</button>
+        <Campo
+          id="categoriaCodigo"
+          etiqueta="Código"
+          requerido={false}
+          valor={codigo}
+          cambiar={setCodigo}
+        />
+
+        <label htmlFor="descripcionCategoria" className="form-label">
+          Descripción con formato
+        </label>
+        <EditorDescripcion
+          id="descripcionCategoria"
+          valor={descripcionHtml}
+          cambiar={setDescripcionHtml}
+        />
+
+        <label htmlFor="tipoAtributos" className="form-label">
+          Tipo de atributos
+        </label>
+        <select
+          id="tipoAtributos"
+          className="form-select mb-3"
+          value={tipoAtributosTexto}
+          onChange={(evento) => setTipoAtributosTexto(evento.target.value)}
+        >
+          {['ASCENSOR', 'CAMION', 'HERRAMIENTA', 'INDUMENTARIA', 'ANDAMIO'].map((tipo) => (
+            <option key={tipo}>{tipo}</option>
+          ))}
+        </select>
+        <p className="form-text">
+          Define los campos dinámicos que aparecerán al crear productos de esta
+          categoría.
+        </p>
+
+        <button
+          className="btn btn-primary me-2"
+          type="submit"
+          disabled={guardando}
+        >
+          {guardando ? 'Guardando…' : 'Guardar categoría'}
+        </button>
         <button
           className="btn btn-outline-secondary"
           type="button"
-          onClick={function () {
-            setId(null);
-            setNombre("");
-          }}
+          onClick={limpiar}
         >
           Cancelar
         </button>
       </form>
     </>
-  );
+  )
 }

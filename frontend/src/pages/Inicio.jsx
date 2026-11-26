@@ -7,13 +7,16 @@ import ContactoInicio from '../components/ContactoInicio.jsx'
 import ListaProductos from '../components/ListaProductos.jsx'
 
 
-function Inicio({ productos, onAgregar }) {
+import CamionAnimado from '../components/CamionAnimado.jsx'
+
+function Inicio({ productos, categoriasDisponibles, onAgregar }) {
 
   const categorias = [
     'ascensores',
     'camiones',
     'herramientas',
-    'indumentaria'
+    'indumentaria',
+    'andamios'
   ]
 
   const destacados = categorias
@@ -29,7 +32,21 @@ function Inicio({ productos, onAgregar }) {
 
       <ServiciosInicio mostrarFranja={true} />
 
-      <CategoriasInicio />
+      <CamionAnimado />
+
+      <section className="container py-4">
+        <div className="border rounded p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div>
+            <h2 className="h4 mb-2">¿Qué equipo necesita tu obra?</h2>
+            <p className="mb-0">Ingresa las medidas de tu proyecto y conoce nuestra recomendación.</p>
+          </div>
+          <Link to="/recomendador-obra" className="btn btn-primary">
+            Recomendar equipo
+          </Link>
+        </div>
+      </section>
+
+      <CategoriasInicio disponibles={categoriasDisponibles} />
 
       <section className="section section-soft">
         <div className="container">

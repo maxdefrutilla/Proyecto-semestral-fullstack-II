@@ -1,152 +1,234 @@
-import { useState } from "react";
-import Campo from "../components/Campo";
-import { siguienteId, dinero, buscarRegistro } from "../data/operaciones";
+import { useState } from 'react'
+
+import Campo from '../components/Campo.jsx'
+import EditorDescripcion from '../components/EditorDescripcion.jsx'
+import { dinero } from '../data/operaciones.js'
+import { sanitizarHtml, textoDeHtml } from '../utils/html.js'
+
+function etiquetaDe(nombre) {
+  return String(nombre ?? '')
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (letra) => letra.toUpperCase())
+}
+
+const atributosPorTipo = {
+  ASCENSOR: [['capacidadKg', 'number', 'kg', true], ['alturaMaxMetros', 'number', 'm', true], ['tamano']],
+  CAMION: [['tonelaje', 'number', 't'], ['tamano']],
+  HERRAMIENTA: [['voltaje'], ['tamano']],
+  INDUMENTARIA: [['ajusteMinCm', 'number', 'cm'], ['ajusteMaxCm', 'number', 'cm'], ['certificacionVerificada', 'checkbox']],
+  ANDAMIO: [['anchoModuloMetros', 'number', 'm', true], ['altoModuloMetros', 'number', 'm', true]],
+}
+
+function camposDe(tipo) {
+  return (atributosPorTipo[tipo] ?? []).map(([nombre, tipo = 'text', unidad = '', obligatorio = false]) => ({
+    nombre, etiqueta: etiquetaDe(nombre), tipo, unidad, obligatorio,
+  }))
+}
 
 export default function AdminProductos(props) {
-  const [editando, setEditando] = useState(null);
-  const [nombre, setNombre] = useState("");
-  const [categoria, setCategoria] = useState(props.categorias[0].codigo);
-  const [precio, setPrecio] = useState("");
-  const [stock, setStock] = useState("");
-  const [tonelaje, setTonelaje] = useState("No aplica");
-  const [tamano, setTamano] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [imagen, setImagen] = useState("ascensores.jpg");
-  const [oferta, setOferta] = useState(false);
-  const [anterior, setAnterior] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [eliminar, setEliminar] = useState(null);
-  const [soloCriticos, setSoloCriticos] = useState(false);
-  const [busqueda, setBusqueda] = useState("");
+  const productos = Array.isArray(props.productos) ? props.productos : []
+  const categorias = Array.isArray(props.categorias) ? props.categorias : []
+  const categoriaInicial = categorias[0]?.codigo ?? ''
+
+  const [editando, setEditando] = useState(null)
+  const [nombre, setNombre] = useState('')
+  const [categoria, setCategoria] = useState(categoriaInicial)
+  const [precio, setPrecio] = useState('')
+  const [stock, setStock] = useState('')
+  const [descripcionHtml, setDescripcionHtml] = useState('')
+  const [atributos, setAtributos] = useState({})
+  const [imagen, setImagen] = useState('ascensores.jpg')
+  const [oferta, setOferta] = useState(false)
+  const [anterior, setAnterior] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [eliminar, setEliminar] = useState(null)
+  const [soloCriticos, setSoloCriticos] = useState(false)
+  const [busqueda, setBusqueda] = useState('')
+  const [guardando, setGuardando] = useState(false)
+
+  const categoriaSeleccionada = categorias.find(
+    (item) => item.codigo === categoria
+  )
+  const campos = camposDe(categoriaSeleccionada?.tipoAtributos)
 
   function limpiar() {
-    setEditando(null);
-    setNombre("");
-    setPrecio("");
-    setStock("");
-    setTamano("");
-    setDescripcion("");
-    setTonelaje("No aplica");
-    setOferta(false);
-    setAnterior("");
+    setEditando(null)
+    setNombre('')
+    setCategoria(categoriaInicial)
+    setPrecio('')
+    setStock('')
+    setDescripcionHtml('')
+    setAtributos({})
+    setImagen('ascensores.jpg')
+    setOferta(false)
+    setAnterior('')
   }
+
   function cargar(producto) {
-    setEditando(producto.id);
-    setNombre(producto.nombre);
-    setCategoria(producto.categoria);
-    setPrecio(String(producto.precio));
-    setStock(String(producto.stock));
-    setTonelaje(producto.tonelaje);
-    setTamano(producto.tamano);
-    setDescripcion(producto.descripcion);
-    setImagen(producto.imagen);
-    setOferta(producto.oferta);
-    setAnterior(String(producto.precioAnterior));
-    setMensaje("");
+    setEditando(producto.id)
+    setNombre(producto.nombre ?? '')
+    setCategoria(producto.categoria ?? categoriaInicial)
+    setPrecio(String(producto.precio ?? ''))
+    setStock(String(producto.stock ?? ''))
+    setDescripcionHtml(producto.descripcionHtml ?? '')
+    const atributosCargados = {
+      ...(producto.atributos && typeof producto.atributos === 'object'
+        ? producto.atributos
+        : {}),
+    }
+    if (producto.tonelaje && !atributosCargados.tonelaje) {
+      atributosCargados.tonelaje = producto.tonelaje
+    }
+    if (producto.tamano && !atributosCargados.tamano) {
+      atributosCargados.tamano = producto.tamano
+    }
+    setAtributos(atributosCargados)
+    setImagen(producto.imagen ?? 'ascensores.jpg')
+    setOferta(Number(producto.precioAnterior) > Number(producto.precio))
+    setAnterior(String(producto.precioAnterior ?? ''))
+    setMensaje('')
   }
-  function guardar(event) {
-    event.preventDefault();
-    let categoriaExiste = false;
-    for (let i = 0; i < props.categorias.length; i++)
-      if (props.categorias[i].codigo === categoria) categoriaExiste = true;
-    if (
-      nombre.trim() === "" ||
-      tamano.trim() === "" ||
-      tonelaje.trim() === "" ||
-      descripcion.trim() === "" ||
-      !categoriaExiste
-    ) {
-      setMensaje("Completa nombre, categoría, tonelaje, tamaño y descripción.");
-      return;
+
+  function cambiarCategoria(nuevaCategoria) {
+    setCategoria(nuevaCategoria)
+    setAtributos({})
+  }
+
+  function cambiarAtributo(nombreCampo, valor) {
+    setAtributos((anterior) => ({ ...anterior, [nombreCampo]: valor }))
+  }
+
+  async function guardar(evento) {
+    evento.preventDefault()
+    setMensaje('')
+
+    const categoriaExiste = categorias.some((item) => item.codigo === categoria)
+    if (!nombre.trim() || !categoriaExiste) {
+      setMensaje('Completa el nombre y selecciona una categoría válida.')
+      return
+    }
+    if (!textoDeHtml(descripcionHtml)) {
+      setMensaje('La descripción no puede estar vacía.')
+      return
     }
     if (!/^[1-9][0-9]{0,9}$/.test(precio) || !/^[0-9]{1,6}$/.test(stock)) {
       setMensaje(
-        "Ingresa un precio entero positivo y stock entero mayor o igual a cero.",
-      );
-      return;
+        'Ingresa un precio entero positivo y un stock entero mayor o igual a cero.'
+      )
+      return
     }
+
+    for (const campo of campos.filter((item) => item.obligatorio)) {
+      const valor = atributos[campo.nombre]
+      if (valor === undefined || valor === null || String(valor).trim() === '') {
+        setMensaje(`Completa el atributo ${campo.etiqueta}.`)
+        return
+      }
+      if (campo.tipo === 'number' && (!Number.isFinite(Number(valor)) || Number(valor) <= 0)) {
+        setMensaje(`El atributo ${campo.etiqueta} debe ser numérico.`)
+        return
+      }
+    }
+
     if (
       oferta &&
       (!/^[1-9][0-9]{0,9}$/.test(anterior) ||
         Number(anterior) <= Number(precio))
     ) {
-      setMensaje("El precio anterior debe ser mayor al precio de oferta.");
-      return;
+      setMensaje('El precio anterior debe ser mayor al precio de oferta.')
+      return
     }
-    const original = buscarRegistro(props.productos, editando);
+
+    const esNuevo = editando === null
     const producto = {
-      id: editando === null ? siguienteId(props.productos) : editando,
+      id: editando,
+      codigo: nombre.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40),
+      categoriaId: categoriaSeleccionada?.id,
       nombre: nombre.trim(),
-      categoria,
       precio: Number(precio),
       stock: Number(stock),
-      tonelaje: tonelaje.trim(),
-      tamano: tamano.trim(),
-      descripcion: descripcion.trim(),
       imagen,
-      oferta,
-      precioAnterior: oferta ? Number(anterior) : 0,
-      etiqueta: "Equipamiento de obra",
-      detalles: original
-        ? original.detalles
-        : [
-            "Características referenciales. Editar según la ficha del fabricante.",
-          ],
-    };
-    props.guardar(producto, editando === null);
-    limpiar();
-    setMensaje("Producto guardado. El catálogo ya está actualizado.");
+      descripcionHtml: sanitizarHtml(descripcionHtml),
+      atributos,
+      precioAnterior: oferta ? Number(anterior) : null,
+    }
+
+    setGuardando(true)
+    try {
+      await props.guardar(producto, esNuevo)
+      limpiar()
+      setMensaje(
+        esNuevo
+          ? 'Producto creado y publicado en el catálogo.'
+          : 'Producto actualizado en el catálogo.'
+      )
+    } catch (fallo) {
+      setMensaje(fallo?.message ?? 'No fue posible guardar el producto.')
+    } finally {
+      setGuardando(false)
+    }
   }
-  const opciones = [];
-  for (let i = 0; i < props.categorias.length; i++)
-    opciones.push(
-      <option key={props.categorias[i].id} value={props.categorias[i].codigo}>
-        {props.categorias[i].nombre}
-      </option>,
-    );
-  const filas = [];
-  for (let i = 0; i < props.productos.length; i++) {
-    const producto = props.productos[i];
-    if (soloCriticos && producto.stock > 5) continue;
-    if (
-      producto.nombre.toLowerCase().indexOf(busqueda.toLowerCase().trim()) ===
-      -1
+
+  async function confirmarEliminacion() {
+    try {
+      const respuesta = await props.eliminar(eliminar)
+      setMensaje(respuesta || 'Producto dado de baja.')
+      if (editando === eliminar) limpiar()
+    } catch (fallo) {
+      setMensaje(fallo?.message ?? 'No fue posible dar de baja el producto.')
+    } finally {
+      setEliminar(null)
+    }
+  }
+
+  const filas = productos
+    .filter((producto) => !soloCriticos || producto.stock <= 5)
+    .filter((producto) =>
+      (producto.nombre ?? '')
+        .toLowerCase()
+        .includes(busqueda.toLowerCase().trim())
     )
-      continue;
-    filas.push(
+    .map((producto) => (
       <tr key={producto.id}>
-        <td>{producto.nombre}</td>
+        <td>
+          {producto.nombre}
+          {producto.activo === false && (
+            <span className="badge bg-secondary ms-2">Inactivo</span>
+          )}
+        </td>
         <td>{dinero(producto.precio)}</td>
         <td>{producto.stock}</td>
         <td>
           <div className="d-flex gap-2">
             <button
+              type="button"
               className="btn btn-sm btn-outline-primary"
-              onClick={function () {
-                cargar(producto);
-              }}
+              onClick={() => cargar(producto)}
             >
               Editar
             </button>
             <button
+              type="button"
               className="btn btn-sm btn-outline-danger"
-              onClick={function () {
-                setEliminar(producto.id);
-              }}
+              disabled={producto.activo === false}
+              onClick={() => setEliminar(producto.id)}
             >
-              Eliminar
+              Dar de baja
             </button>
           </div>
         </td>
-      </tr>,
-    );
-  }
+      </tr>
+    ))
+
   return (
     <>
       <h2>Productos</h2>
       <p className="text-muted">
-        Los cambios se reflejan en la tienda y se reinician al recargar.
+        Los cambios se envían a la API y se reflejan en el catálogo. La baja es
+        lógica: el historial de pedidos no se elimina.
       </p>
+
       <label className="form-label" htmlFor="buscarAdmin">
         Buscar producto
       </label>
@@ -154,9 +236,7 @@ export default function AdminProductos(props) {
         id="buscarAdmin"
         className="form-control mb-3"
         value={busqueda}
-        onChange={function (e) {
-          setBusqueda(e.target.value);
-        }}
+        onChange={(evento) => setBusqueda(evento.target.value)}
       />
       <div className="form-check mb-3">
         <input
@@ -164,37 +244,33 @@ export default function AdminProductos(props) {
           className="form-check-input"
           type="checkbox"
           checked={soloCriticos}
-          onChange={function (e) {
-            setSoloCriticos(e.target.checked);
-          }}
+          onChange={(evento) => setSoloCriticos(evento.target.checked)}
         />
         <label className="form-check-label" htmlFor="criticos">
           Solo stock crítico: 5 unidades o menos
         </label>
       </div>
+
       {eliminar !== null && (
         <div className="alert alert-warning">
-          <p>¿Eliminar este producto del catálogo y del carrito?</p>
+          <p>¿Dar de baja este producto del catálogo?</p>
           <button
+            type="button"
             className="btn btn-danger btn-sm me-2"
-            onClick={function () {
-              props.eliminar(eliminar);
-              if (editando === eliminar) limpiar();
-              setEliminar(null);
-            }}
+            onClick={confirmarEliminacion}
           >
             Confirmar
           </button>
           <button
+            type="button"
             className="btn btn-outline-secondary btn-sm"
-            onClick={function () {
-              setEliminar(null);
-            }}
+            onClick={() => setEliminar(null)}
           >
             Cancelar
           </button>
         </div>
       )}
+
       <div className="table-responsive">
         <table className="table">
           <thead>
@@ -209,19 +285,20 @@ export default function AdminProductos(props) {
         </table>
         {filas.length === 0 && <p>No hay productos para este filtro.</p>}
       </div>
+
       <form className="form-surface mt-4" onSubmit={guardar} noValidate>
-        <h3>{editando === null ? "Nuevo producto" : "Editar producto"}</h3>
+        <h3>{editando === null ? 'Nuevo producto' : 'Editar producto'}</h3>
         {mensaje && (
-          <p className="alert alert-info" role="status">
-            {mensaje}
-          </p>
+          <p className="alert alert-info" role="status">{mensaje}</p>
         )}
+
         <Campo
           id="productoNombre"
           etiqueta="Nombre"
           valor={nombre}
           cambiar={setNombre}
         />
+
         <label className="form-label" htmlFor="productoCategoria">
           Categoría
         </label>
@@ -229,12 +306,61 @@ export default function AdminProductos(props) {
           id="productoCategoria"
           className="form-select mb-3"
           value={categoria}
-          onChange={function (e) {
-            setCategoria(e.target.value);
-          }}
+          onChange={(evento) => cambiarCategoria(evento.target.value)}
         >
-          {opciones}
+          {categorias.map((item) => (
+            <option key={item.id} value={item.codigo}>
+              {item.nombre}
+            </option>
+          ))}
         </select>
+
+        {campos.length > 0 && (
+          <fieldset className="mb-3">
+            <legend className="form-label fs-6">
+              Atributos de {categoriaSeleccionada?.nombre ?? 'la categoría'}
+            </legend>
+            {campos.map((campo) => {
+              const id = `atributo-${campo.nombre}`
+              const valor = atributos[campo.nombre]
+              return campo.tipo === 'checkbox' ? (
+                <div className="form-check mb-2" key={campo.nombre}>
+                  <input
+                    id={id}
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={Boolean(valor)}
+                    onChange={(evento) =>
+                      cambiarAtributo(campo.nombre, evento.target.checked)
+                    }
+                  />
+                  <label className="form-check-label" htmlFor={id}>
+                    {campo.etiqueta}
+                  </label>
+                </div>
+              ) : (
+                <div className="mb-2" key={campo.nombre}>
+                  <label className="form-label" htmlFor={id}>
+                    {campo.etiqueta}
+                    {campo.obligatorio ? ' *' : ''}
+                    {campo.unidad ? ` (${campo.unidad})` : ''}
+                  </label>
+                  <input
+                    id={id}
+                    className="form-control"
+                    type={campo.tipo === 'number' ? 'number' : 'text'}
+                    step={campo.tipo === 'number' ? 'any' : undefined}
+                    value={valor ?? ''}
+                    onChange={(evento) =>
+                      cambiarAtributo(campo.nombre, evento.target.value)
+                    }
+                  />
+                </div>
+              )
+            })}
+          </fieldset>
+        )}
+
         <div className="row">
           <div className="col-md-6">
             <Campo
@@ -259,30 +385,16 @@ export default function AdminProductos(props) {
             />
           </div>
         </div>
-        <Campo
-          id="productoTonelaje"
-          etiqueta="Tonelaje"
-          valor={tonelaje}
-          cambiar={setTonelaje}
-        />
-        <Campo
-          id="productoTamano"
-          etiqueta="Tamaño"
-          valor={tamano}
-          cambiar={setTamano}
-        />
+
         <label htmlFor="descripcionProducto" className="form-label">
-          Descripción
+          Descripción con formato
         </label>
-        <textarea
+        <EditorDescripcion
           id="descripcionProducto"
-          className="form-control mb-3"
-          value={descripcion}
-          rows="3"
-          onChange={function (e) {
-            setDescripcion(e.target.value);
-          }}
+          valor={descripcionHtml}
+          cambiar={setDescripcionHtml}
         />
+
         <label htmlFor="imagenProducto" className="form-label">
           Imagen referencial
         </label>
@@ -290,30 +402,29 @@ export default function AdminProductos(props) {
           id="imagenProducto"
           className="form-select mb-3"
           value={imagen}
-          onChange={function (e) {
-            setImagen(e.target.value);
-          }}
+          onChange={(evento) => setImagen(evento.target.value)}
         >
           <option value="ascensores.jpg">Ascensor</option>
           <option value="camiones.jpg">Camión</option>
           <option value="herramientas.jpg">Herramientas</option>
           <option value="indumentaria.jpg">Indumentaria</option>
           <option value="obra.jpg">Obra</option>
+          <option value="andamios.jpg">Andamios</option>
         </select>
+
         <div className="form-check mb-3">
           <input
             id="productoOferta"
             className="form-check-input"
             type="checkbox"
             checked={oferta}
-            onChange={function (e) {
-              setOferta(e.target.checked);
-            }}
+            onChange={(evento) => setOferta(evento.target.checked)}
           />
-          <label htmlFor="productoOferta" className="form-check-label">
+          <label className="form-check-label" htmlFor="productoOferta">
             En oferta
           </label>
         </div>
+
         {oferta && (
           <Campo
             id="precioAnterior"
@@ -325,8 +436,13 @@ export default function AdminProductos(props) {
             step="1"
           />
         )}
-        <button className="btn btn-primary me-2" type="submit">
-          Guardar producto
+
+        <button
+          className="btn btn-primary me-2"
+          type="submit"
+          disabled={guardando}
+        >
+          {guardando ? 'Guardando…' : 'Guardar producto'}
         </button>
         <button
           className="btn btn-outline-secondary"
@@ -337,5 +453,5 @@ export default function AdminProductos(props) {
         </button>
       </form>
     </>
-  );
+  )
 }

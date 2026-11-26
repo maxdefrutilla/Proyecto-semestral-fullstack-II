@@ -1,113 +1,62 @@
-import { Link } from "react-router-dom";
-import Encabezado from "../components/Encabezado";
-import imagenes from "../data/imagenes";
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import Encabezado from '../components/Encabezado.jsx'
+import imagenes from '../data/imagenes.js'
+import { listarArticulos, obtenerArticulo } from '../services/blogService.js'
+import { sanitizarHtml } from '../utils/html.js'
 
-export default function Blog(props) {
-  if (props.articulo === 1)
-    return (
-      <>
-        <Encabezado
-          seccion="Blog"
-          titulo="Qué revisar antes de elegir un equipo."
-        />
-        <section className="section">
-          <div className="container lectura">
-            <p>
-              Empieza por definir la tarea, el lugar de trabajo y el tiempo de
-              uso. Esa información permite comparar alternativas con un criterio
-              común.
-            </p>
-            <h2 className="fs-4">Capacidad y dimensiones</h2>
-            <p>
-              Revisa el tonelaje y el tamaño en la ficha del producto. Confirma
-              con el proveedor los requerimientos de instalación y operación del
-              modelo real.
-            </p>
-            <h2 className="fs-4">Compra o arriendo</h2>
-            <p>
-              Considera si el equipo se necesita para una etapa puntual o para
-              distintos proyectos. Cotiza ambas alternativas antes de decidir.
-            </p>
-            <Link to="/blog">Volver al blog</Link>
-          </div>
-        </section>
-      </>
-    );
-  if (props.articulo === 2)
-    return (
-      <>
-        <Encabezado
-          seccion="Blog"
-          titulo="Cómo preparar una consulta de arriendo."
-        />
-        <section className="section">
-          <div className="container lectura">
-            <p>
-              Una consulta clara permite revisar equipos y plazos con menos
-              intercambios.
-            </p>
-            <h2 className="fs-4">Los datos de tu proyecto</h2>
-            <p>
-              Indica el tipo de tarea, las fechas, la ubicación y la capacidad
-              requerida. Agrega si necesitas operador o traslado.
-            </p>
-            <h2 className="fs-4">Antes de confirmar</h2>
-            <p>
-              Consulta qué incluye la tarifa y cuáles son las condiciones de
-              entrega, retiro y mantención. Los valores de este sitio son
-              ejemplos académicos.
-            </p>
-            <Link to="/arriendos">Consultar un plan</Link>
-            <br />
-            <Link to="/blog">Volver al blog</Link>
-          </div>
-        </section>
-      </>
-    );
+export default function Blog() {
+  const { slug } = useParams()
+  return <ContenidoBlog key={slug ?? 'blog'} slug={slug} />
+}
+
+function ContenidoBlog({ slug }) {
+  const [datos, setDatos] = useState(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let activo = true
+    const consulta = slug ? obtenerArticulo(slug) : listarArticulos()
+    consulta.then((resultado) => {
+      if (activo) setDatos(resultado)
+    }).catch((fallo) => {
+      if (activo) setError(fallo.message)
+    })
+    return () => { activo = false }
+  }, [slug])
+
   return (
     <>
-      <Encabezado
-        seccion="Blog"
-        titulo="Ideas para preparar tu próxima obra."
-      />
+      <Encabezado seccion="Blog" titulo={datos?.titulo ?? 'Ideas para preparar tu próxima obra.'} />
       <section className="section">
-        <div className="container">
-          <div className="row g-4">
-            <div className="col-md-6">
-              <article className="product-card">
-                <img
-                  className="blog-image"
-                  src={imagenes.obra}
-                  alt="Obra en construcción"
-                />
-                <div className="product-body">
-                  <h2 className="fs-4">
-                    Qué revisar antes de elegir un equipo
-                  </h2>
-                  <p>La tarea, el espacio y la capacidad que necesitas.</p>
-                  <Link to="/blog/elegir-equipo">Leer artículo</Link>
+        <div className={slug ? 'container lectura' : 'container'}>
+          {error && <p role="alert">{error}</p>}
+          {!datos && !error && <p role="status">Cargando artículos…</p>}
+          {slug ? (
+            <>
+              {datos && <div dangerouslySetInnerHTML={{ __html: sanitizarHtml(datos.contenidoHtml) }} />}
+              <Link to="/blog">Volver al blog</Link>
+            </>
+          ) : datos && (
+            <div className="row g-4">
+              {datos.map((articulo) => (
+                <div key={articulo.id} className="col-md-6">
+                  <article className="product-card">
+                    {articulo.imagen && (
+                      <img className="blog-image" src={imagenes[articulo.imagen] || imagenes.obra} alt="" />
+                    )}
+                    <div className="product-body">
+                      <h2 className="fs-4">{articulo.titulo}</h2>
+                      <p>{articulo.resumen}</p>
+                      <Link to={`/blog/${articulo.slug}`}>Leer artículo</Link>
+                    </div>
+                  </article>
                 </div>
-              </article>
+              ))}
             </div>
-            <div className="col-md-6">
-              <article className="product-card">
-                <img
-                  className="blog-image"
-                  src={imagenes.camiones}
-                  alt="Camión de obra"
-                />
-                <div className="product-body">
-                  <h2 className="fs-4">
-                    Cómo preparar una consulta de arriendo
-                  </h2>
-                  <p>Los datos que ayudan a definir un plan.</p>
-                  <Link to="/blog/planificar-arriendo">Leer artículo</Link>
-                </div>
-              </article>
-            </div>
-          </div>
+          )}
         </div>
       </section>
     </>
-  );
+  )
 }

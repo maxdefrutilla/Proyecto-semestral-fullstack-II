@@ -9,11 +9,9 @@ export default function FormularioContacto(props) {
   const [empresa, setEmpresa] = useState("");
   const [rut, setRut] = useState("");
   const [asunto, setAsunto] = useState("");
-  const [tipo, setTipo] = useState(props.plan ? "arriendo" : "");
+  const [tipo, setTipo] = useState("");
   const [equipo, setEquipo] = useState("");
-  const [mensaje, setMensaje] = useState(
-    props.plan ? "Me interesa el plan " + props.plan + ". Fechas: " : "",
-  );
+  const [mensaje, setMensaje] = useState("");
   const [errores, setErrores] = useState({});
   const [enviado, setEnviado] = useState(false);
 
@@ -107,7 +105,6 @@ export default function FormularioContacto(props) {
             }}
           >
             <option value="">Selecciona una opción</option>
-            <option value="arriendo">Arriendo</option>
             <option value="compra">Compra</option>
             <option value="servicio">Servicio técnico</option>
             <option value="capacitacion">Capacitación</option>
